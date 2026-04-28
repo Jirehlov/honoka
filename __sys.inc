@@ -708,6 +708,7 @@
 // データ関連
 #command $$get_config_sample_text : str				// コンフィグ／テキストで表示するサンプルテキストを取得する
 #command $$set_config_prefont_name(int, str)		// コンフィグに登録されているフォント名を設定する
+#command $$get_config_other_prefont_type : int		// コンフィグに設定されているフォントが登録されていないフォントかどうか
 #command $$get_prev_config_mode : int				// 前回のコンフィグモードを取得する
 #command $$set_prev_config_mode(int)				// 前回のコンフィグモードを設定する
 

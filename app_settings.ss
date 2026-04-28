@@ -113,7 +113,8 @@ command $$set_wipe_data_default(property $wipe_no)
 	case(208)	$$set_wipe_mask_file(__mask10)
 				$$set_wipe_simple_data( 900,   300,           0,     8,     0,     0,      0,     0,    0,     0,     0)	// 素早い移動マスクワイプ(↓)：0.3秒
 	
-	case(300)	$$set_wipe_mask_file(mask_test)
+	case(300)	//$$set_wipe_mask_file(mask_test)	// （※アップデート対応※）存在しないファイルを指定していたので存在するファイルを指定するよう変更
+				$$set_wipe_mask_file(__mask11)
 				$$set_wipe_simple_data( 900,   1500,          0,     8,     0,     0,      0,     0,    0,     0,     0)	// システム
 		
 	default		$$set_wipe_simple_data(   0,     0,           0,     0,     0,     0,      0,     0,    0,     0,     0)

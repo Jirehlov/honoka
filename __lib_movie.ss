@@ -23,6 +23,9 @@ command $$play_movie(property $filename : str, property $wait_key)
 	// タイトルを空文字にする
 	set_title("")
 	
+	// マウスカーソルを非表示にする
+	script.set_mouse_disp_off
+	
 	if( $wait_key )
 	{
 	    mov.play_wait_key($filename)
@@ -31,4 +34,7 @@ command $$play_movie(property $filename : str, property $wait_key)
 	{
 	    mov.play_wait($filename)
 	}
+	
+	// マウスカーソルを表示する
+	script.set_mouse_disp_on
 }

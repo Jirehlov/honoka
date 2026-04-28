@@ -305,5 +305,9 @@ command $$get_record_complete_rate : int
 		}
 	}
 	
-	return ($count * 100 / @レコード最大数)
+	if( $count > 0 ) {
+		$count = math.limit(1, $count * 100 / @レコード最大数, 100)
+	}
+	
+	return ($count)
 }

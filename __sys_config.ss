@@ -461,6 +461,10 @@ command $$update_config_ex(property $select_btn)
 				// ボタン描画を更新する
 				$$update_config_radio_button(excall.front, @ボタン_コンフィグ_文字設定_フォントＡ, 2, <FONT_TYPE>)
 				
+				if( excall.front.object[@ボタン_コンフィグ_文字設定_フォント_詳細設定].disp ) {
+					$$update_ui_toggle_button(excall.front.object[@ボタン_コンフィグ_文字設定_フォント_詳細設定], 0)
+				}
+				
 				break
 			}
 		}
@@ -473,6 +477,10 @@ command $$update_config_ex(property $select_btn)
 				
 				// ボタン描画を更新する
 				$$update_config_radio_button(excall.front, @ボタン_コンフィグ_文字設定_フォントＡ, 2, <FONT_TYPE>)
+				
+				if( excall.front.object[@ボタン_コンフィグ_文字設定_フォント_詳細設定].disp ) {
+					$$update_ui_toggle_button(excall.front.object[@ボタン_コンフィグ_文字設定_フォント_詳細設定], 1)
+				}
 			}
 		}
 	}
@@ -503,6 +511,18 @@ command $$set_config_prefont_name(property $index, property $font_name : str)
 {
 	$prefont_name.resize($index + 1)
 	$prefont_name[$index] = $font_name
+}
+
+//---------------------------------------------------------------------------
+// コンフィグに設定されているフォントが登録されていないフォントかどうか
+//---------------------------------------------------------------------------
+command $$get_config_other_prefont_type : int
+{
+	if( <FONT_TYPE> == 2 ) {
+		return (1)
+	}
+	
+	return (0)
 }
 
 //---------------------------------------------------------------------------

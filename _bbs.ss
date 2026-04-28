@@ -1281,3 +1281,12 @@ command $$set_request_joypad_navigation(property $stage : stage)
 	$stage.object[@ボタン_依頼書_受けない].joypad_left  = @ボタン_依頼書_受ける
 	$stage.object[@ボタン_依頼書_受けない].joypad_right = @ボタン_依頼書_受ける
 }
+
+//---------------------------------------------------------------------------
+// 掲示板画面の既読／未読スキップフラグを初期化する
+//---------------------------------------------------------------------------
+command $$reset_bbs_skip_flag
+{
+	$read_skip_flag = 0
+	$auto_skip_flag = 0
+}

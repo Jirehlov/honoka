@@ -233,7 +233,6 @@ command $$play_item_get_hide_animation(property $obj : object, property $animati
 //-----------------------------------------------------------------
 command $$play_title_get_animation(property $obj : object, property $title_name : str, property $animation_type)
 {
-	property $font_name : str
 	property $text : str
 	property $wait_time
 	property $pcm_ch
@@ -243,9 +242,6 @@ command $$play_title_get_animation(property $obj : object, property $title_name 
 	
 	// メッセージをバックログに追加
 	msgbk.insert_msg($text)
-	
-	// 現在選択しているフォントを保存しておく
-	$font_name = syscom.get_font_name
 	
 	// フォントを一時的に変更する
 	script.set_font_name(@アイテム獲得フォント)
@@ -288,7 +284,7 @@ command $$play_title_get_animation(property $obj : object, property $title_name 
 	}
 	
 	// フォントを元に戻す
-	script.set_font_name($font_name)
+	script.set_font_name_default
 }
 
 //-----------------------------------------------------------------
@@ -296,15 +292,11 @@ command $$play_title_get_animation(property $obj : object, property $title_name 
 //-----------------------------------------------------------------
 command $$play_item_get_animation(property $obj : object, property $text : str, property $animation_type)
 {
-	property $font_name : str
 	property $wait_time
 	property $pcm_ch
 	
 	// メッセージをバックログに追加
 	msgbk.insert_msg($text)
-	
-	// 現在選択しているフォントを保存しておく
-	$font_name = syscom.get_font_name
 	
 	// フォントを一時的に変更する
 	script.set_font_name(@アイテム獲得フォント)
@@ -347,7 +339,7 @@ command $$play_item_get_animation(property $obj : object, property $text : str, 
 	}
 	
 	// フォントを元に戻す
-	script.set_font_name($font_name)
+	script.set_font_name_default
 }
 
 //-----------------------------------------------------------------

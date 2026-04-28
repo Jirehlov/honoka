@@ -32,4 +32,7 @@ default						@dm("__sys_load_after.ss → サイドバー動作の指定は" + math.tostr(<S
 // メッセージウィンドウボタンを更新する
 $$update_mwbtn
 
+// 掲示板画面の既読／未読スキップフラグを初期化する
+$$reset_bbs_skip_flag
+
 return

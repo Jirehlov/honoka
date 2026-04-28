@@ -74,3 +74,5 @@
 
 #command $$init_bbs_data														// 掲示板データ初期化
 #command $$set_bbs_request_data(str, str, int, int, int, str, int, str, int)	// 掲示板の依頼書データを設定する
+
+#command $$reset_bbs_skip_flag			// 掲示板画面の既読／未読スキップフラグを初期化する
