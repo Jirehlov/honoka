@@ -28,7 +28,7 @@ $$menu_control_enabled			// メニュー画面でのユーザー制御を設定する
 if( <FIRSTBOOT> == 0 )
 {
 	//ダミーファイル認証
-	system.check_dummy_file_once("dummy", 244, "anemoi_X7mQ2pL9a")
+	//system.check_dummy_file_once("dummy", 244, "anemoi_X7mQ2pL9a")
 	
 	$$first_boot
 	

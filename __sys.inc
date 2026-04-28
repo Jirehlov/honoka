@@ -799,7 +799,9 @@
 #command $$get_extra_cg_page_thumb_max : int				// 現在のページのサムネイル最大数を取得する
 #command $$set_extra_cg_page_max(int)						// 現在の最大ページ数を設定する
 #command $$get_extra_cg_disp_filename : str					// 現在表示中のＣＧファイル名を取得する
-#command $$get_extra_cg_diff_cnt(int, int) : int			// 
+#command $$get_extra_cg_diff_cnt(int, int) : int
+#command $$get_extra_cg_static_diff_cnt(int) : int
+#command $$get_extra_cg_static_diff_filename(int, int) : str			// 
 
 // シーンオブジェクト関連
 #command $$create_extra_cg_scene_object(stage)				// シーンオブジェクトを作成する
@@ -1308,6 +1310,12 @@
 #command $$init_toast(stage)							// トーストを初期化する
 #command $$push_toast(str, str)							// トーストを追加する（追加した順に自動で表示される）
 #command $$get_toast_size : int							// 現在追加されているトーストの数を取得する（表示中を含む）
+#command $$try_show_bgm_toast(str, int, int)
+#command $$show_bgm_toast(str)
+#command $$get_bgm_toast_music_index(str) : int
+#command $$get_bgm_toast_info_x(int) : int
+#command $$show_bgm_toast_info(int)
+#command $$fa_bgm_toast(frameaction, object)
 
 
 //---------------------------------------------------------------------------

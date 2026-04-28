@@ -34,6 +34,7 @@
 
 $$create_extra_cg_scene_object(excall.back)							// シーンオブジェクトを作成する
 $$set_scene_data(excall.back)										// シーンデータを設定する
+$$update_all_thumb_diff
 $$update_scene_object(excall.back)									// シーンオブジェクトの描画を更新する
 $$auto_joypad_navigation(@ボタン_エクストラ_ＣＧ_閉じる,			// 自動でジョイパッド時のボタン遷移先を設定する
 						 @ボタン_エクストラ_ＣＧ_サムネイル最大)
@@ -197,56 +198,30 @@ command $$get_extra_cg_cnt : int
 //---------------------------------------------------------------------------
 command $$open_cg(property $cg_list_index) : int
 {
-	property $i
-	property $j
-	property $filename : str
-	
-	if( $cg_list[$cg_list_index] == "" ) {
-		return (0)
-	}
-	
-	// エクストラのＣＧモードの自動差分計算カテゴリ(小分類)
-	// ※ＣＧファイル名の末尾が２桁
-	if( __EXTRA_CG_DIFF_MODE == 0 )
-	{
-		for( $i = 0, $i <= __EXTRA_CG_S_DIFF_MAX, $i += 1 )
-		{
-			$filename = $$get_extra_cg($cg_list_index) + "_" + math.tostr_zero($i, 2)
-			
-			if( $$exists_image($filename) == 0 ) {
-				continue
-			}
-			
-			if( cgtable.get_look_by_name($filename) == 1 )
-			{
-				return (1)
-			}
-		}
-	}
-	
-	// エクストラのＣＧモードの自動差分計算カテゴリ(大分類＋小分類)
-	// ※ＣＧファイル名の末尾が４桁
-	else
-	{
-		for( $i = 0, $i <= __EXTRA_CG_L_DIFF_MAX, $i += 1 )
-		{
-			for( $j = 0, $j <= __EXTRA_CG_S_DIFF_MAX, $j += 1 )
-			{
-				$filename = $$get_extra_cg($cg_list_index) + "_" + math.tostr_zero($i, 2) + math.tostr_zero($j, 2)
-				
-				if( $$exists_image($filename) == 0 ) {
-					continue
-				}
-				
-				if( cgtable.get_look_by_name($filename) == 1 )
-				{
-					return (1)
-				}
-			}
-		}
-	}
-	
-	return (0)
+    property $i
+    property $filename : str
+    property $diff_cnt
+    
+    if( $cg_list[$cg_list_index] == "" ) {
+        return (0)
+    }
+    
+    $diff_cnt = $$get_extra_cg_static_diff_cnt($cg_list_index)
+    for( $i = 0, $i < $diff_cnt, $i += 1 )
+    {
+        $filename = $$get_extra_cg_static_diff_filename($cg_list_index, $i)
+        
+        if( $filename == "" ) {
+            continue
+        }
+        
+        if( cgtable.get_look_by_name($filename) == 1 )
+        {
+            return (1)
+        }
+    }
+    
+    return (0)
 }
 
 //---------------------------------------------------------------------------

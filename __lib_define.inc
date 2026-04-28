@@ -250,6 +250,7 @@
 // システムオブジェクト／フルプライス
 #replace	<OBJ_END>						399			// ゲームオブジェクト終了番号
 #replace	<OBJ_MODAL>						400			// モーダルオブジェクト
+#replace	<OBJ_BGM_TOAST>					505			// BGM first-seen popup
 #replace	<OBJ_SIDEBAR>					506			// サイドバー
 #replace	<OBJ_SYS_TOAST>					507			// システムトースト（オートセーブ時のポップアップなど）
 #replace	<OBJ_TOAST>						508			// トースト（レコード取得時のポップアップなど）

@@ -1285,8 +1285,7 @@
 //---------------------------------------------------------------------------
 // ‚a‚f‚lÄ¶
 #macro	@bgm(@filename, @fade_in_time(0), @fade_out_time(0))
-	bgm.play(@filename, @fade_in_time, @fade_out_time)
-
+	$$try_show_bgm_toast(@filename, @fade_in_time, @fade_out_time)
 // ‚a‚f‚l’â~
 #macro	@bgm_stop(@time(1000), @wait(0))
 	$$bgm_stop(@time, @wait)
