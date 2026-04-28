@@ -84,6 +84,72 @@ command $$get_extra_cg_disp_filename : str
 }
 
 //---------------------------------------------------------------------------
+// 
+//---------------------------------------------------------------------------
+command $$get_extra_cg_diff_cnt(property $cg_index, property $is_max)
+{
+	property $i
+	property $j
+	property $filename : str
+	property $count
+	
+	$diff_list.init
+	
+	// エクストラのＣＧモードの自動差分計算カテゴリ(小分類)
+	// ※ＣＧファイル名の末尾が２桁
+	if( __EXTRA_CG_DIFF_MODE == 0 )
+	{
+		for( $i = 0, $i <= __EXTRA_CG_S_DIFF_MAX, $i += 1 )
+		{
+			$filename = $$get_extra_cg($cg_index) + "_" + math.tostr_zero($i, 2)
+			
+			if( $$exists_image($filename) == 0 ) {
+				continue
+			}
+			
+			switch( cgtable.get_look_by_name($filename) ) {
+			case(-1)
+			case(0)
+				if( $is_max ) {
+					$count += 1
+				}
+			case(1)
+				$count += 1
+			}
+		}
+	}
+	
+	// エクストラのＣＧモードの自動差分計算カテゴリ(大分類＋小分類)
+	// ※ＣＧファイル名の末尾が４桁
+	else
+	{
+		for( $i = 0, $i <= __EXTRA_CG_L_DIFF_MAX, $i += 1 )
+		{
+			for( $j = 0, $j <= __EXTRA_CG_S_DIFF_MAX, $j += 1 )
+			{
+				$filename = $$get_extra_cg($cg_index) + "_" + math.tostr_zero($i, 2) + math.tostr_zero($j, 2)
+				
+				if( $$exists_image($filename) == 0 ) {
+					continue
+				}
+				
+				switch( cgtable.get_look_by_name($filename) ) {
+				case(-1)
+				case(0)
+					if( $is_max ) {
+						$count += 1
+					}
+				case(1)
+					$count += 1
+				}
+			}
+		}
+	}
+	
+	return ($count)
+}
+
+//---------------------------------------------------------------------------
 // イベントＣＧの差分リストを設定する
 //---------------------------------------------------------------------------
 command $$set_cg_diff(property $cg_list_index)

@@ -19,6 +19,7 @@
 	#property	$bs_disp_mode						// 表示モード
 	#property	$bs_disp_slide_time					// 表示モードがスライドの時にスライド移動にかける時間
 	#property	$bs_async_change_time				// 非同期での立ち絵変更を管理する時間
+	#property	$bs_force_tonecurve_disable			// 立ち絵のトーンカーブを強制的に無効にする
 	
 	// 立ち絵指定名タイプ
 	#replace	<BS_NAME_TYPE_ERROR>	-1			// エラー
@@ -44,6 +45,7 @@
 	#property	$bs_face_scale : intlist			// 顔グラ拡縮率
 	#property	$bs_face_offset_x : intlist			// 顔グラ補正座標(x)
 	#property	$bs_face_offset_y : intlist			// 顔グラ補正座標(y)
+	#property	$bs_reverse_x : intlist				// 立ち絵反転
 	
 	// 立ち絵のデフォルト表示位置(最大５人まで)
 	#property	$bs_default_pos_x : intlist[15]	// １人[0]
@@ -85,6 +87,11 @@ command $$set_bs_object(property $obj : object, property $bs_name : str)
 	$obj.y = -(<BS_IMAGE_SIZE_Y> - <SCREEN_HEIGHT>) / 2
 	$obj.wipe_copy = 1
 	
+	// 立ち絵反転設定がある場合は反転する
+	if( $bs_reverse_x[$index] ) {
+		$obj.scale_x *= -1
+	}
+	
 	// アクションコマンドが使えるオブジェクトに設定する
 	$$set_action_object($obj)
 	
@@ -94,7 +101,7 @@ command $$set_bs_object(property $obj : object, property $bs_name : str)
 	$obj.layer = <LAYER_CHARACTER> + $bs_range_type[$index] * <LAYER_CHARACTER_RANGE_OFFSET> + $bs_offset_layer[$index]
 	
 	// トーンカーブが有効な場合は設定する
-	if( __USE_BS_TONECURVE ) {
+	if( __USE_BS_TONECURVE && $bs_force_tonecurve_disable == 0 ) {
 		$obj.tonecurve_no = $$get_bg_tonecurve_no
 	}
 	
@@ -622,7 +629,7 @@ command $$create_face(property $bs_name : str)
 	front.mwnd[$mwnd_no].face[0].y_rep[0] = $bs_face_offset_y[$index]
 	front.mwnd[$mwnd_no].face[0].mask_no = <MASK_GROUP_FACE>
 	// トーンカーブが有効な場合は設定する
-	if( __USE_BS_TONECURVE ) {
+	if( __USE_BS_TONECURVE && $bs_force_tonecurve_disable == 0 ) {
 		front.mwnd[$mwnd_no].face[0].tonecurve_no = $$get_bg_tonecurve_no
 	}
 }
@@ -1076,6 +1083,7 @@ command $$register_bs_character(property $character_name : str, property $file_n
 	$bs_face_scale.resize($size)
 	$bs_face_offset_x.resize($size)
 	$bs_face_offset_y.resize($size)
+	$bs_reverse_x.resize($size)
 	
 	// キャラクター個別データを登録する
 	$bs_identifier[$size - 1] = $character_name
@@ -1386,6 +1394,22 @@ command $$is_error_bs_name(property $bs_name : str)
 	
 	@dm("__lib_bs.ss → $$is_error_bs_name\n立ち絵指定が判別できませんでした。書式が正しいか確認してください。\n立ち絵名 : " + $bs_name + "\n処理をスキップします。")
 	return (1)
+}
+
+//---------------------------------------------------------------------------
+// 立ち絵のトーンカーブの強制無効設定
+//---------------------------------------------------------------------------
+command $$set_bs_force_tonecurve_disable(property $flag)
+{
+	$bs_force_tonecurve_disable = $flag
+}
+
+//---------------------------------------------------------------------------
+// 立ち絵のx座標反転を設定する
+//---------------------------------------------------------------------------
+command $$set_bs_reverse_x(property $bs_index, property $flag)
+{
+	$bs_reverse_x[$bs_index] = $flag
 }
 
 //---------------------------------------------------------------------------

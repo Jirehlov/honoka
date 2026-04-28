@@ -60,6 +60,13 @@ command $$create_config_footer_scene_object(property $stage : stage)
 //---------------------------------------------------------------------------
 command $$create_record_footer_scene_object(property $stage : stage)
 {
+	$$create_footer_save_button($stage.object[@ボタン_フッター_セーブ], _footer_record_save_btn, 166, 970, @ボタン_フッター_セーブ, <OBJBTN_GROUP_NO_EXCALL>, 1)
+	$$create_footer_load_button($stage.object[@ボタン_フッター_ロード], _footer_record_load_btn, 374, 970, @ボタン_フッター_ロード, <OBJBTN_GROUP_NO_EXCALL>, 1)
+	$$create_ui_button($stage.object[@ボタン_フッター_コンフィグ], _footer_record_config_btn, 582, 970, @ボタン_フッター_コンフィグ, <OBJBTN_GROUP_NO_EXCALL>, 1)
+	$$create_ui_button($stage.object[@ボタン_フッター_レコード], _footer_record_record_btn, 834, 970, @ボタン_フッター_レコード, <OBJBTN_GROUP_NO_EXCALL>, 1)
+	$$create_ui_button($stage.object[@ボタン_フッター_タイトルに戻る], _footer_record_title_btn, 1092, 970, @ボタン_フッター_タイトルに戻る, <OBJBTN_GROUP_NO_EXCALL>, 1)
+	$$create_ui_button($stage.object[@ボタン_フッター_ゲームを終了する], _footer_record_exit_btn, 1318, 970, @ボタン_フッター_ゲームを終了する, <OBJBTN_GROUP_NO_EXCALL>, 1)
+	$$create_ui_button($stage.object[@ボタン_フッター_戻る], _footer_record_back_btn, 1566, 970, @ボタン_フッター_戻る, <OBJBTN_GROUP_NO_EXCALL>, 2)
 }
 
 //---------------------------------------------------------------------------
@@ -67,10 +74,6 @@ command $$create_record_footer_scene_object(property $stage : stage)
 //---------------------------------------------------------------------------
 command $$set_footer_joypad_navigation(property $stage : stage)
 {
-	// 体験版処理（レコードボタンは押せない）
-	// 挟む隙間ないのでパッド遷移追加時に合わせて追加する
-	$stage.object[@ボタン_フッター_レコード].set_button_state_disable
-	
 	$stage.object[@ボタン_フッター_セーブ].joypad_left  = @ボタン_フッター_戻る
 	$stage.object[@ボタン_フッター_セーブ].joypad_right = @ボタン_フッター_ロード
 	

@@ -26,6 +26,9 @@
 //---------------------------------------------------------------------------
 #z00
 
+// エクストラ中フラグを初期化
+<EXTRA_MODE> = 0
+
 // メニュー画面でのユーザー制御を設定する
 $$menu_control_enabled
 
@@ -121,13 +124,17 @@ while(1)
 		
 	case(@ボタン_メニュー_エクストラ)
 		
+		<EXTRA_MODE> = 1
 		$jump_from_title = 1					// タイトル画面からの遷移フラグをオンにする
 		$bgm_file = bgm.get_regist_name			// 再生中のＢＧＭ名を保存する
 		syscom.call_ex(__sys_extra_mode_select)	// エクストラ画面へ
 		$jump_from_title = 0					// タイトル画面からの遷移フラグをオフにする
+		<EXTRA_MODE> = 0
 		
 		// タイトル画面のＢＧＭを再生する
-		bgm.play($bgm_file, __MENU_BGM_FADEIN_TIME_FROM_EXTRA, __MENU_BGM_FADEOUT_TIME_FROM_EXTRA)
+		if( $bgm_file != "" ) {
+			bgm.play($bgm_file, __MENU_BGM_FADEIN_TIME_FROM_EXTRA, __MENU_BGM_FADEOUT_TIME_FROM_EXTRA)
+		}
 		
 	case(@ボタン_メニュー_ゲーム終了)
 		

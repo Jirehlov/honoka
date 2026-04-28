@@ -69,7 +69,7 @@ command $$show_config_text_scene_object(property $stage : stage)
 	
 	// コンフィグに登録されているフォント名を設定する
 	$$set_config_prefont_name(0, "Noto Sans CJK JP DemiLight")
-	$$set_config_prefont_name(1, "FOT-キアロ Std B")
+	$$set_config_prefont_name(1, "M+ 1mn medium")
 	
 	// ジョイパッドで最初に選択されているボタンを設定する
 	$$set_joypad_focus_button(@ボタン_コンフィグ_ヘッダー_テキスト)

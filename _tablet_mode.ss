@@ -72,9 +72,6 @@ command $$show_tablet_scene_object(property $stage : stage)
 	// ボタン効果音を再生する
 	se.play_by_se_no(<BUTTON_SE_DECIDE>)
 	
-	// 体験版処理（レコードボタンは押せない）
-	$stage.object[@ボタン_クイックメニュー_レコード].set_button_state_disable
-	
 	// ワイプ（表示速度によって変更）
 	if( <EFFECT_SPEED_SYS_MENU> )
 	{
@@ -178,7 +175,7 @@ command $$set_tablet_joypad_navigation(property $stage : stage)
 command $$create_tablet_help_scene_object(property $stage : stage)
 {
 	$$create_ui_image($stage.object[@オブジェクト_タブレットモード_ヘルプ_背景], _tablet_mode_help_bg, 0, 0)
-	$$create_ui_button($stage.object[@ボタン_タブレットモード_ヘルプ_閉じる], _tablet_mode_help_close_btn, 1712, 997, @ボタン_タブレットモード_ヘルプ_閉じる, <OBJBTN_GROUP_NO_MODAL>, 2)
+	$$create_ui_button($stage.object[@ボタン_タブレットモード_ヘルプ_閉じる], _tablet_mode_help_close_btn, 1589, 0, @ボタン_タブレットモード_ヘルプ_閉じる, <OBJBTN_GROUP_NO_MODAL>, 2)
 }
 
 //---------------------------------------------------------------------------

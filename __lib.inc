@@ -352,6 +352,8 @@
 																// ※各タイトルごとにapp_settings.ssで設定
 #command $$set_bs_tonecurve(str) : int							// 立ち絵のトーンカーブの設定
 																// ※各タイトルごとにapp_settings.ssで設定
+#command $$set_bs_force_tonecurve_disable(int)					// 立ち絵のトーンカーブの強制無効設定
+#command $$set_bs_reverse_x(int, int)							// 立ち絵のx座標反転を設定する
 
 // 非同期での立ち絵変更
 #command $$init_bs_async_change_time							// 非同期での立ち絵変更を管理する時間を初期化する

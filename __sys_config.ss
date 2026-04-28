@@ -97,9 +97,9 @@ command $$update_config_ex(property $select_btn)
 	case(@ボタン_コンフィグ_オートセーブ_有効)						$$update_autosave_enable(1)
 	case(@ボタン_コンフィグ_レコード表示_無効)						$$update_record_disp(0)
 	case(@ボタン_コンフィグ_レコード表示_有効)						$$update_record_disp(1)
-	case(@ボタン_コンフィグ_タブレットモード_無効)					$$update_tablet_mode_setting(0)
-	case(@ボタン_コンフィグ_タブレットモード_右)					$$update_tablet_mode_setting(1)
-	case(@ボタン_コンフィグ_タブレットモード_左)					$$update_tablet_mode_setting(2)
+	case(@ボタン_コンフィグ_タブレットモード_無効)					$$update_tablet_mode_setting(0, $select_btn)
+	case(@ボタン_コンフィグ_タブレットモード_右)					$$update_tablet_mode_setting(1, $select_btn)
+	case(@ボタン_コンフィグ_タブレットモード_左)					$$update_tablet_mode_setting(2, $select_btn)
 	case(@ボタン_コンフィグ_右クリック_クイックメニュー)			$$update_rclick_mode(<RCLICK_MODE_QUICK_MENU>)
 	case(@ボタン_コンフィグ_右クリック_ウィンドウ消去)				$$update_rclick_mode(<RCLICK_MODE_WINDOW_CLOSE>)
 	case(@ボタン_コンフィグ_右クリック_コンフィグ画面)				$$update_rclick_mode(<RCLICK_MODE_CONFIG>)
@@ -718,7 +718,7 @@ command $$update_record_disp(property $mode)
 //---------------------------------------------------------------------------
 // タブレットモード設定の更新
 //---------------------------------------------------------------------------
-command $$update_tablet_mode_setting(property $mode)
+command $$update_tablet_mode_setting(property $mode, property $select_btn)
 {
 	// タブレットモードを設定する
 	<TABLET_MODE> = $mode
@@ -751,9 +751,21 @@ command $$update_tablet_mode_setting(property $mode)
 	// ヘルプを見ていない場合はヘルプシーンへ
 	if( <TABLET_MODE_HELP> == 0 )
 	{
+		// フォーカスボタンを更新する
+		$$update_joypad_focus_button(excall.front)
+		
+		// タブレットモードヘルプへ
 		farcall(__sys_tablet_mode)
 		
 		<TABLET_MODE_HELP> = 1
+		
+		// 選択されたボタンをジョイパッドで選択中のボタンに再設定する
+		$$set_joypad_focus_button($select_btn)
+		
+		// ジョイパッドモードがオフの場合はフォーカスボタンを更新する
+		if( syscom.check_joypad_mode == 0 ) {
+			$$update_joypad_focus_button(excall.front)
+		}
 	}
 }
 

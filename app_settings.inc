@@ -63,11 +63,13 @@
 #replace	__SAVELOAD_DIALOG_LOAD_WAIT				250		// セーブ／ロード専用ダイアログでセーブを行った際の待ち時間(ミリ秒)
 #replace	__CONFIG_MODE_SELECT_SCENE				0		// コンフィグのモード選択シーン有効(1)／無効(0)
 #replace	__SELECT_DEFAULT_OPEN_DIALOG			1		// コンフィグ設定を初期化選択時にダイアログ表示を有効(1)／無効(0)
-#replace	__EXTRA_MODE_SELECT_SCENE				1		// エクストラのモード選択シーン有効(1)／無効(0)
-#replace	__EXTRA_CG_DIFF_MODE					0		// エクストラのＣＧモードの自動差分計算カテゴリ 大分類＋小分類(1)／小分類のみ(0)
+#replace	__EXTRA_MODE_SELECT_SCENE				0		// エクストラのモード選択シーン有効(1)／無効(0)
+#replace	__EXTRA_CG_DIFF_MODE					1		// エクストラのＣＧモードの自動差分計算カテゴリ 大分類＋小分類(1)／小分類のみ(0)
 #replace	__EXTRA_CG_L_DIFF_MAX					10		// エクストラのＣＧモードの自動差分計算最大数(大分類)
-#replace	__EXTRA_CG_S_DIFF_MAX					10		// エクストラのＣＧモードの自動差分計算最大数(小分類)
+#replace	__EXTRA_CG_S_DIFF_MAX					36		// エクストラのＣＧモードの自動差分計算最大数(小分類)
 #replace	__EXTRA_CG_DIFF_END_LOOP				0		// エクストラのＣＧモードでＣＧ差分の終点で差分の始点にループする有効(1)／無効(0)
+#replace	__EXTRA_CG_THUMB_OFFSET_X				8		// エクストラのＣＧモードのサムネイルオフセット座標(x)※オーバレイサムネイル使用時のみ
+#replace	__EXTRA_CG_THUMB_OFFSET_Y				8		// エクストラのＣＧモードのサムネイルオフセット座標(y)※オーバレイサムネイル使用時のみ
 #replace	__DIALOG_AUTO_MOUSE_MOVE				0		// ダイアログ表示時に自動でマウスカーソルをフォーカスされているボタンに移動する
 #replace	__CHAPTER_JUMP_MODE						0		// チャプタージャンプモード 回想シーン※セーブ／ロード不可(1)／シナリオフロー※指定シナリオから最後まで(0)
 #replace	__EXTRA_CHARACTER_BMP_CODE				8015823	// 立ち絵鑑賞保存／読み込みbmpを識別するコード(立ち絵鑑賞モードを使用するときはタイトルごとにかぶらない値に変更する必要があります)
@@ -104,7 +106,7 @@
 #replace	__MWBTN_LOCK_TYPE2_HIDE_TIME		300			// ウィンドウボタン(type2)の消去にかける時間
 
 // トースト（レコード取得時のポップアップなど）設定
-#replace	__TOAST_ENABLE					0		// トースト機能(type1)を有効(1)／無効(0)
+#replace	__TOAST_ENABLE					1		// トースト機能(type1)を有効(1)／無効(0)
 #replace	__TOAST_SHOW_TIME				500		// トーストの表示にかける時間
 #replace	__TOAST_HIDE_TIME				500		// トーストの消去にかける時間
 #replace	__TOAST_WAIT_TIME				4000	// トースト表示待機時間
@@ -240,3 +242,14 @@
 // アクションコマンド
 #define		@1a				<ACTION_COMMAND> + ac_1a			// サンプル
 #define		@u1_ai			<ACTION_COMMAND> + slide_u1_ai		// 愛乃用／傘で上から降ってくる
+#define		@1p				<ACTION_COMMAND> + ac_1p			// ふらふらと立ち上がる
+#define		@1l				<ACTION_COMMAND> + ac_1l			// ため息
+#define		@1a_td			<ACTION_COMMAND> + ac_1a_td			// つづら_嗅ぎ
+#define		@1a_hi			<ACTION_COMMAND> + ac_1a_hi			// 淡雪_ど？ど？ど？
+#define		@2a_hi			<ACTION_COMMAND> + ac_2a_hi			// 淡雪_とんとん
+#define		@1j				<ACTION_COMMAND> + ac_1j			// がくぶるループ
+#define		@1c				<ACTION_COMMAND> + ac_1c			// アタック
+#define		@d1_au			<ACTION_COMMAND> + slide_d1_au		// 愛乃用／傘 下から中央へ表示
+#define		@u1_au			<ACTION_COMMAND> + slide_u1_au		// 愛乃用／傘 下から上へ消える
+#define		@ss_hi			<ACTION_COMMAND> + slide_ss_hi		// くまざさ
+

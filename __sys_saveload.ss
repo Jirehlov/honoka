@@ -97,7 +97,7 @@ while( 1 )
 	#ifdef @TRIAL
 	#else
 	
-	b[0] = $auto_page
+	b[0] = $auto_page	//todo
 	b[1] = $quick_page
 	b[2] = $tab
 	b[3] = $page
@@ -235,7 +235,7 @@ while( 1 )
 		}
 		
 		// オートページへのセーブの場合は禁止する
-		if( $mode == @セーブロード_モード_セーブ && $page == @ボタン_セーブロード_オートページ )
+		if( $mode == @セーブロード_モード_セーブ && $page_mode == <PAGE_MODE_AUTO> )
 		{
 			se.play_by_se_no(<BUTTON_SE_WARNING>)						// ボタン効果音を再生する
 			$$call_ok_dialog(@確認ダイアログ_モード_オートセーブ上書き)	// ＯＫダイアログを呼び出す
@@ -745,6 +745,7 @@ command $$prev_page
 	}
 	else
 	{
+		$tab = 0
 		$page_mode -= 1
 		if( $page_mode < 0 ) {
 			$page_mode = $page_mode_list.get_size - 1
@@ -789,6 +790,7 @@ command $$next_page
 	}
 	else
 	{
+		$tab = 0
 		$page_mode += 1
 		if( $page_mode >= $page_mode_list.get_size ) {
 			$page_mode = 0

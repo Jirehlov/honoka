@@ -21,8 +21,35 @@
 //---------------------------------------------------------------------------
 // フォント定義
 //---------------------------------------------------------------------------
-#replace	@アイテム獲得フォント		"FOT-キアロ Std B"
+#replace	@アイテム獲得フォント		"M+ 1mn medium"
 
+
+//---------------------------------------------------------------------------
+// 視点変更
+//---------------------------------------------------------------------------
+#define		@麦視点				@視点変更(0)
+#define		@スピカ視点			@視点変更(1)
+#define		@愛乃視点			@視点変更(2)
+#define		@淡雪視点			@視点変更(3)
+#define		@小詠視点			@視点変更(4)
+#define		@六花視点			@視点変更(5)
+#define		@その他視点			@視点変更(6)
+
+#macro		@視点変更(@chara_no)
+	if( get_mwnd != 0 )
+	{
+		@dm("メッセージウィンドウ０番以外（通常メッセージウィンドウ）での視点変更は使用できません。処理をスキップします。")
+	}
+	else
+	{
+		close
+		$$set_character_view_filter(@chara_no)
+		@視点フラグ = @chara_no
+	}
+
+#define		@視点フラグ			F[0]
+
+#command $$set_character_view_filter(int)		// 各視点のメッセージウィンドウフィルターを設定する
 
 //---------------------------------------------------------------------------
 // システム
@@ -69,6 +96,14 @@
 
 #command $$fa_check_joypad_input(frameaction)			// ユーザー制御中にパッド入力を監視するフレームアクション
 
+#macro	@レコード全クリアチェック
+	if( @朱比華ルートクリア && @愛乃ルートクリア && @陽彩ルートクリア && @小詠ルートクリア && @六花ルートクリア &&
+		@エタニクルルートクリア && @アネモイルートクリア &&
+		@文弥ルートクリア && @塁ルートクリア && @つづらルートクリア && @千春ルートクリア && @健ルートクリア )
+	{
+		@レコード獲得(@レコード_全ルートをクリアした)
+	}
+
 
 //---------------------------------------------------------------------------
 // ムービー
@@ -76,7 +111,7 @@
 #macro	@ＯＰムービー
 	$$play_movie("anemoi_op", @ＯＰを見た)
 	@ＯＰを見た = 1
-	//bgmtable.set_listen_by_name(bgmxxx, 1)		// ＢＧＭフラグ(ＯＰ)
+	bgmtable.set_listen_by_name(BGM81, 1)		// ＢＧＭフラグ(ＯＰ)
 	@fade(0, 1000)
 	@waitkey(2000)
 
@@ -195,6 +230,12 @@
 	back.object[l[0]].tr = @tr
 	back.object[l[0]].dark = @dark
 
+// 立ち絵明るい化
+#macro	@bs_bright(@bs_name, @bright(255), @tr(255))
+	l[0] = $$get_bs_obj_index(@bs_name)
+	back.object[l[0]].tr = @tr
+	back.object[l[0]].bright = @bright
+
 // 立ち絵拡縮
 #macro	@bs_scale(@bs_name, @src_zoom(1500), @dst_zoom(1000), @zoom_time(30000), @speed_mode(0), @center_rep_y(980))
 	back.object[$$get_bs_obj_index(@bs_name)].center_rep_y = @center_rep_y
@@ -215,6 +256,13 @@
 #command $$has_title(str) : int							// 過去に称号を取得したことがあるか
 #command $$get_title_get_text(str) : str				// 称号獲得時のテキストを取得する
 #command $$play_title_get_animation(object, str, int)	// 称号獲得アニメーションを再生する
+
+
+//---------------------------------------------------------------------------
+// 小詠Play（マクロは000_称号.inc）
+//---------------------------------------------------------------------------
+#command $$get_kyplay07_question_text(int) : str		// 小詠Play07質問
+#command $$get_kyplay07_anser_text(int, int) : str		// 小詠Play07回答
 
 
 //---------------------------------------------------------------------------
@@ -312,18 +360,10 @@
 //---------------------------------------------------------------------------
 // アイキャッチ
 //---------------------------------------------------------------------------
-#macro	@アイキャッチ(@date, @bg_name(ef_avan_bg02))
+#macro	@アイキャッチ(@date, @bg_name(ef_avan_bg02), @type(0))
+	$$eye_catch(@date, @bg_name, @type)
 
-	// 0701冒頭は何もしない
-	if( @date == "0701" )
-	{
-	}
-	else
-	{
-		$$eye_catch(@date, @bg_name)
-	}
-
-#command $$eye_catch(str, str)			// アイキャッチ
+#command $$eye_catch(str, str, int)			// アイキャッチ
 
 
 //---------------------------------------------------------------------------
@@ -404,6 +444,33 @@
 #macro	@オーロラ再生
 	back.object[<OBJ_APP_EFFECT01>].resume_movie
 
+#macro	@赤オーロラパン(@bg_name(ef_bg05), @wipe_no(__DEFAULT_BG_WIPE_NO), @src_block(4), @dst_block(6), @move_time(30000), @speed_mode(0), @scale(1500), @close(__DEFAULT_BG_MSG_CLOSE), @wait(__DEFAULT_BG_WAIT), @type(0), @wipe_copy(0))
+	if( @close ) { close }
+	@赤オーロラ準備(@bg_name, @type, @wipe_copy)
+	$$move_image_block(back.object[<OBJ_BG>], @src_block, @dst_block, @scale, @move_time, 0, @speed_mode)
+	$$move_image_block(back.object[<OBJ_APP_EFFECT01>], @src_block, @dst_block, @scale, @move_time, 0, @speed_mode)
+	back.object[<OBJ_APP_EFFECT01>].blend = 1
+	@赤オーロラ再生
+	@wipe(@wipe_no, -1, @wait, 0)
+
+#macro	@赤オーロラズーム(@bg_name(ef_bg05), @wipe_no(__DEFAULT_BG_WIPE_NO), @src_scale(1500), @dst_scale(1000), @zoom_time(30000), @speed_mode(0), @close(__DEFAULT_BG_MSG_CLOSE), @wait(__DEFAULT_BG_WAIT), @center_rep_x(-1), @center_rep_y(-1), @type(0), @wipe_copy(0))
+	@赤オーロラ準備(@bg_name, @type, @wipe_copy)
+	$$set_scale_eve(back.object[<OBJ_BG>], @src_scale, @dst_scale, @zoom_time, 0, @speed_mode)
+	if( @center_rep_x != -1 ) {
+		back.object[<OBJ_BG>].center_rep_x = @center_rep_x
+	}
+	if( @center_rep_y != -1 ) {
+		back.object[<OBJ_BG>].center_rep_y = @center_rep_y
+	}
+	$$set_scale_eve(back.object[<OBJ_APP_EFFECT01>], @src_scale, @dst_scale, @zoom_time, 0, @speed_mode)
+	if( @center_rep_x != -1 ) {
+		back.object[<OBJ_APP_EFFECT01>].center_rep_x = @center_rep_x
+	}
+	if( @center_rep_y != -1 ) {
+		back.object[<OBJ_APP_EFFECT01>].center_rep_y = @center_rep_y
+	}
+	@赤オーロラ再生
+	@wipe(@wipe_no)
 
 //---------------------------------------------------------------------------
 // 光の葉
@@ -445,6 +512,24 @@
 //---------------------------------------------------------------------------
 #macro	@災獣_狼(@wipe_no(3))
 	@災獣_表示(ef_dark_monster01, @wipe_no)
+
+#macro	@災獣_猪(@wipe_no(3))
+	@災獣_表示(ef_dark_monster02, @wipe_no)
+
+#macro	@災獣_鯨(@wipe_no(3))
+	@災獣_表示(ef_dark_monster03, @wipe_no)
+
+#macro	@災獣_バロン(@wipe_no(3))
+	@災獣_表示(ef_dark_monster04, @wipe_no)
+
+#macro	@災獣_蛇(@wipe_no(3))
+	@災獣_表示(ef_dark_monster05, @wipe_no)
+
+#macro	@災獣_鳥(@wipe_no(3))
+	@災獣_表示(ef_dark_monster06, @wipe_no)
+
+#macro	@災獣_竜(@wipe_no(3))
+	@災獣_表示(ef_dark_monster07, @wipe_no)
 
 #macro	@災獣_表示(@filename, @wipe_no(3))
 	back.object[<OBJ_APP_EFFECT01>].create_movie_loop(@filename, 1)
@@ -615,6 +700,51 @@
 
 #command $$create_black_wind(object)
 
+//---------------------------------------------------------------------------
+// 赤風（災獣周り）
+//---------------------------------------------------------------------------
+#macro	@赤い風(@wipe_no(102), @wipe_time(500), @shake(1))
+	$$create_red_wind(back.object[<OBJ_APP_EFFECT02>], 0)
+	@wipe(@wipe_no, @wipe_time)
+	if( @shake ) {
+		@揺れ中ループ
+	}
+
+#macro	@赤い風終了(@shake(1))
+	front.object[<OBJ_APP_EFFECT02>].wipe_copy = 0
+	if( @shake ) {
+		@揺れループ停止
+	}
+
+#macro	@赤い風パン(@wipe_no(3), @src_y(-270), @dst_y(270), @move_time(30000), @speed_mode(0), @scale(1500), @shake(1))
+	$$create_red_wind(back.object[<OBJ_APP_EFFECT02>], 0)
+	back.object[<OBJ_APP_EFFECT02>].set_scale(@scale, @scale)
+	back.object[<OBJ_APP_EFFECT02>].set_center_rep(960, 540)
+	$$set_pos_y_eve(back.object[<OBJ_APP_EFFECT02>], @src_y, @dst_y, @move_time, 0, @speed_mode)
+	@wipe(@wipe_no)
+	if( @shake ) {
+		@揺れ中ループ
+	}
+
+#macro	@赤い風２(@wipe_no(102), @wipe_time(500), @shake(1))
+	@風の回廊_浅層(1500, 1, 0, 0)
+	back.object[<OBJ_APP_EFFECT02>].layer += 1
+	$$create_red_wind(back.object[<OBJ_APP_EFFECT01>], 1)
+	@wipe(@wipe_no, @wipe_time)
+	if( @shake ) {
+		@揺れ中ループ
+	}
+
+#macro	@赤い風２終了(@shake(1))
+	front.object[<OBJ_APP_EFFECT01>].wipe_copy = 0
+	front.object[<OBJ_APP_EFFECT02>].wipe_copy = 0
+	if( @shake ) {
+		@揺れループ停止
+	}
+
+
+#command $$create_red_wind(object, int)
+
 
 //---------------------------------------------------------------------------
 // 過剰集中
@@ -637,6 +767,7 @@
 	}
 	$$concentration_end(front.object[<OBJ_APP_EFFECT01>])
 	@se(SE_trigger_out)
+	@回想枠終了
 	@mono_end
 	front.object[<OBJ_APP_EFFECT01>].wipe_copy = 0
 	@wipe(121, 1000)
@@ -644,9 +775,12 @@
 		@bgm_resume(2000)
 	}
 
+#macro	@過剰集中_塵_回想用
+	$$concentration_dust(back.object[<OBJ_APP_EFFECT01>])
+
 #command $$concentration_start(object)
 #command $$concentration_end(object)
-
+#command $$concentration_dust(object)
 
 //---------------------------------------------------------------------------
 // 寝起きの薄目（上下に黒フィルター）
@@ -672,6 +806,14 @@
 
 #macro	@淡雪スタンプハート(@wipe_no(2), @se_play(1), @bg_name(<NONE>))
 	@淡雪スタンプ共通(0, @wipe_no, @se_play, @bg_name)
+
+#macro	@淡雪スタンプハナマルハート(@wipe_no(2), @se_play(1), @bg_name(<NONE>))
+	@淡雪スタンプ共通(1, @wipe_no, @se_play, @bg_name, -420)
+	@淡雪スタンプ共通(0, @wipe_no, @se_play, @bg_name,  420, 1)
+
+#macro	@淡雪スタンプハート２つ(@wipe_no(2), @se_play(1), @bg_name(<NONE>))
+	@淡雪スタンプ共通(0, @wipe_no, @se_play, @bg_name, -420)
+	@淡雪スタンプ共通(0, @wipe_no, @se_play, @bg_name,  420, 1)
 
 #macro	@淡雪スタンプ共通(@patno, @wipe_no(2), @se_play(1), @bg_name(<NONE>), @offset_x(0), @offset_obj_no(0))
 	close
@@ -711,6 +853,19 @@
 	back.object[<OBJ_IMAGE_TEXT>].y_eve.set(0, 1000, 0, 2)
 	@wipe(0)
 
+//---------------------------------------------------------------------------
+// トイレに行きたい時は誤魔化さず正直に言いましょう
+//---------------------------------------------------------------------------
+#macro	@トイレに行きたい時は(@text)
+	@画像文字(ef_reminder_text, 1, "", @text)		// 画像文字作成
+	back.object[<OBJ_IMAGE_TEXT>].y = 50
+	back.object[<OBJ_IMAGE_TEXT>].y_eve.set(0, 1000, 0, 2)
+	@wipe(0)
+
+#macro	@ツミレ看板_終了
+	front.object[<OBJ_IMAGE_TEXT>].y = 0
+	front.object[<OBJ_IMAGE_TEXT>].y_eve.set(50, 1000, 0, 2)
+	@wipe(0)
 
 //---------------------------------------------------------------------------
 // 汎用演出系
@@ -824,3 +979,747 @@
 	@セピア
 	back.effect[0].begin_layer = 0
 	back.effect[0].end_layer = <LAYER_SCREEN> - 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//---------------------------------------------------------------------------
+// 風の回廊
+//---------------------------------------------------------------------------
+#macro	@風の回廊に入る
+	@todo("サンプルムービーです。光は無数のアルミアス、時の流れが速い（現実）→遅い（回廊）移動のイメージです。現実に戻る場合は動きがゆっくりから速くなります")
+	@fade_w
+	back.object[<OBJ_APP_EFFECT01>].create_movie(move_world01, 1, auto_free = 0)
+	back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_SCREEN>
+	@wipe(3)
+	@waitkey(4000)
+	front.object[<OBJ_APP_EFFECT01>].bright_eve.set(255, 2000, 0, 2)
+	@fade_w
+	@waitkey(1000)
+
+#macro	@現実世界に戻る
+	@todo("サンプルムービーです。光は無数のアルミアス、時の流れが速い（現実）→遅い（回廊）移動のイメージです。現実に戻る場合は動きがゆっくりから速くなります")
+	@fade_w
+	back.object[<OBJ_APP_EFFECT01>].create_movie(move_world11, 1, auto_free = 0)
+	back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_SCREEN>
+	@wipe(3)
+	@waitkey(4000)
+	front.object[<OBJ_APP_EFFECT01>].bright_eve.set(255, 2000, 0, 2)
+	@fade_w
+	@waitkey(1000)
+
+
+//---------------------------------------------------------------------------
+// 風の回廊
+//---------------------------------------------------------------------------
+#macro	@風の回廊_浅層(@scale(1000), @blend(1), @bright(0), @back(1), @front(1))
+	if( @back ) {
+		back.object[<OBJ_APP_EFFECT01>].create_movie_loop(ef_wind_dust01, 1)
+		back.object[<OBJ_APP_EFFECT01>].set_scale(@scale, @scale)
+		back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_BG_FILTER>
+		back.object[<OBJ_APP_EFFECT01>].blend = @blend
+		back.object[<OBJ_APP_EFFECT01>].bright = @bright
+		back.object[<OBJ_APP_EFFECT01>].wipe_copy = 1
+		$$set_image_center_rep(back.object[<OBJ_APP_EFFECT01>])
+	}
+	if( @front ) {
+		back.object[<OBJ_APP_EFFECT02>].create_movie_loop(ef_wind_dust02, 1)
+		back.object[<OBJ_APP_EFFECT02>].set_scale(@scale, @scale)
+		back.object[<OBJ_APP_EFFECT02>].layer = <LAYER_SCREEN>
+		back.object[<OBJ_APP_EFFECT02>].blend = @blend
+		back.object[<OBJ_APP_EFFECT02>].bright = @bright
+		back.object[<OBJ_APP_EFFECT02>].wipe_copy = 1
+		$$set_image_center_rep(back.object[<OBJ_APP_EFFECT02>])
+	}
+	disp
+
+#macro	@風の回廊_中層(@scale(1000), @blend(1), @bright(0), @back(1), @front(1))
+	if( @back ) {
+		back.object[<OBJ_APP_EFFECT01>].create_movie_loop(ef_wind_dust03, 1)
+		back.object[<OBJ_APP_EFFECT01>].set_scale(@scale, @scale)
+		back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_BG_FILTER>
+		back.object[<OBJ_APP_EFFECT01>].blend = @blend
+		back.object[<OBJ_APP_EFFECT01>].bright = @bright
+		back.object[<OBJ_APP_EFFECT01>].wipe_copy = 1
+		$$set_image_center_rep(back.object[<OBJ_APP_EFFECT01>])
+	}
+	if( @front ) {
+		back.object[<OBJ_APP_EFFECT02>].create_movie_loop(ef_wind_dust04, 1)
+		back.object[<OBJ_APP_EFFECT02>].set_scale(@scale, @scale)
+		back.object[<OBJ_APP_EFFECT02>].layer = <LAYER_SCREEN>
+		back.object[<OBJ_APP_EFFECT02>].blend = @blend
+		back.object[<OBJ_APP_EFFECT02>].bright = @bright
+		back.object[<OBJ_APP_EFFECT02>].wipe_copy = 1
+		$$set_image_center_rep(back.object[<OBJ_APP_EFFECT02>])
+	}
+	disp
+
+#macro	@風の回廊_深層(@scale(1000), @blend(1), @bright(0), @back(1), @front(1))
+	if( @back ) {
+		back.object[<OBJ_APP_EFFECT01>].create_movie_loop(ef_wind_dust05, 1)
+		back.object[<OBJ_APP_EFFECT01>].set_scale(@scale, @scale)
+		back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_BG_FILTER>
+		back.object[<OBJ_APP_EFFECT01>].blend = @blend
+		back.object[<OBJ_APP_EFFECT01>].bright = @bright
+		back.object[<OBJ_APP_EFFECT01>].wipe_copy = 1
+		$$set_image_center_rep(back.object[<OBJ_APP_EFFECT01>])
+	}
+	if( @front ) {
+		back.object[<OBJ_APP_EFFECT02>].create_movie_loop(ef_wind_dust06, 1)
+		back.object[<OBJ_APP_EFFECT02>].set_scale(@scale, @scale)
+		back.object[<OBJ_APP_EFFECT02>].layer = <LAYER_SCREEN>
+		back.object[<OBJ_APP_EFFECT02>].blend = @blend
+		back.object[<OBJ_APP_EFFECT02>].bright = @bright
+		back.object[<OBJ_APP_EFFECT02>].wipe_copy = 1
+		$$set_image_center_rep(back.object[<OBJ_APP_EFFECT02>])
+	}
+	disp
+
+#macro	@風の回廊_終了
+	front.object[<OBJ_APP_EFFECT01>].wipe_copy = 0
+	front.object[<OBJ_APP_EFFECT02>].wipe_copy = 0
+
+#macro	@風の回廊_ズーム(@src_scale, @dst_scale, @zoom_time(30000), @speed_mode(0), @back(1), @front(1))
+	if( @back ) {
+		$$set_scale_eve(back.object[<OBJ_APP_EFFECT01>], @src_scale, @dst_scale, @zoom_time, 0, @speed_mode)
+	}
+	if( @front ) {
+		$$set_scale_eve(back.object[<OBJ_APP_EFFECT02>], @src_scale, @dst_scale, @zoom_time, 0, @speed_mode)
+	}
+
+
+//---------------------------------------------------------------------------
+// 風の回廊の門
+//---------------------------------------------------------------------------
+#macro	@風の回廊門(@type(1), @wipe_no(3), @scale(1000), @offset_x(0), @offset_y(0))
+	back.object[<OBJ_APP_EFFECT01>].create_movie_loop(ef_gate_ + math.tostr_zero(@type, 2), 1, @offset_x, @offset_y)
+	back.object[<OBJ_APP_EFFECT01>].set_scale(@scale, @scale)
+	back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_SCREEN>
+	back.object[<OBJ_APP_EFFECT01>].blend = 1
+	back.object[<OBJ_APP_EFFECT01>].wipe_copy = 1
+	back.object[<OBJ_APP_EFFECT01>].set_center_rep(960, 840)
+	@wipe(@wipe_no)
+
+#macro	@風の回廊門_吸収(@type(1), @wipe_no(3), @scale(1000), @offset_x(0), @offset_y(0))
+	back.object[<OBJ_APP_EFFECT01>].create_movie_loop(ef_absorb_ + math.tostr_zero(@type, 2), 1, @offset_x, @offset_y)
+	back.object[<OBJ_APP_EFFECT01>].set_scale(@scale, @scale)
+	back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_SCREEN>
+	back.object[<OBJ_APP_EFFECT01>].blend = 1
+	back.object[<OBJ_APP_EFFECT01>].wipe_copy = 1
+	back.object[<OBJ_APP_EFFECT01>].set_center_rep(960, 840)
+	@wipe(@wipe_no)
+
+#macro	@風の回廊門_縦スクロール(@wipe_no(3), @src_y(0), @dst_y(0), @scale(1500), @move_time(30000), @speed_mode(0), @offset_x(0))
+	back.object[<OBJ_APP_EFFECT01>].set_scale(@scale, @scale)
+	back.object[<OBJ_APP_EFFECT01>].x += @offset_x
+	back.object[<OBJ_APP_EFFECT01>].y = @src_y
+	back.object[<OBJ_APP_EFFECT01>].y_eve.set(@dst_y, @move_time, 0, @speed_mode)
+	@wipe(@wipe_no)
+
+#macro	@風の回廊門_横スクロール(@wipe_no(3), @src_x(0), @dst_x(0), @scale(1500), @move_time(30000), @speed_mode(0), @offset_y(0))
+	back.object[<OBJ_APP_EFFECT01>].set_scale(@scale, @scale)
+	back.object[<OBJ_APP_EFFECT01>].x = @src_x
+	back.object[<OBJ_APP_EFFECT01>].x_eve.set(@dst_x, @move_time, 0, @speed_mode)
+	back.object[<OBJ_APP_EFFECT01>].y += @offset_y
+	@wipe(@wipe_no)
+	
+#macro	@風の回廊門が現れる_前半(@wipe_no(3), @wait_time(2000), @fade_wipe_no(3), @se_play(1))
+	
+	if( @se_play ) {
+		@se(SE_elec_light_swallow_disappear, 2000, 2)
+		@se_stop(5000, 2)
+	}
+	
+	back.object[<OBJ_APP_EFFECT02>].create_movie_loop(ef_wind_dust01, 1)
+	$$set_image_center_rep(back.object[<OBJ_APP_EFFECT02>])
+	back.object[<OBJ_APP_EFFECT02>].layer = <LAYER_BG_FILTER>
+	back.object[<OBJ_APP_EFFECT02>].blend = 1
+	back.object[<OBJ_APP_EFFECT02>].scale_x_eve.set(1250, 3000, 1000, 2)
+	back.object[<OBJ_APP_EFFECT02>].scale_y_eve.set(1250, 3000, 1000, 2)
+	back.object[<OBJ_APP_EFFECT02>].color_add_r_eve.set(128, 3000, 1000, 1)
+	back.object[<OBJ_APP_EFFECT02>].bright_eve.set(255, 3000, 1000, 2)
+	@wipe(@wipe_no)
+	@waitkey(@wait_time)
+	@fade_w(@fade_wipe_no)
+
+#macro	@風の回廊門が現れる_後半(@type(1), @wipe_no(122), @se_play(1))
+	
+	if( @se_play ) {
+		@se(SE_elec_light_pop, 1000, 0)
+		@se(SE_elec_alumias_collective_to_individual, 1000, 1)
+		@se_stop_all(5000)
+	}
+	
+	$$gate_open_particle(back.object[<OBJ_APP_EFFECT02>])
+	
+	if( @type == 1 ) {
+		back.object[<OBJ_APP_EFFECT01>].create_movie_loop(ef_gate_ + math.tostr_zero(@type, 2), 1, 880, 740)
+	} else {
+		back.object[<OBJ_APP_EFFECT01>].create_movie_loop(ef_gate_ + math.tostr_zero(@type, 2), 1, 960, 740)
+	}
+	back.object[<OBJ_APP_EFFECT01>].set_center(889, 702)
+	back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_SCREEN>
+	back.object[<OBJ_APP_EFFECT01>].blend = 4
+	back.object[<OBJ_APP_EFFECT01>].wipe_copy = 1
+	back.object[<OBJ_APP_EFFECT01>].set_scale(0, 0)
+	back.object[<OBJ_APP_EFFECT01>].scale_x_eve.set(1000, 2000, 0, 2)
+	back.object[<OBJ_APP_EFFECT01>].scale_y_eve.set(1000, 2000, 0, 2)
+	
+	back.object[<OBJ_APP_EFFECT01>].tr = 0
+	back.object[<OBJ_APP_EFFECT01>].tr_eve.set(255, 250, 750, 2)
+	
+	back.object[<OBJ_APP_EFFECT01>].bright = 255
+	back.object[<OBJ_APP_EFFECT01>].bright_eve.set(0, 2000, 0, 2)
+	@wipe(@wipe_no)
+
+#macro	@風の回廊門_終了
+	front.object[<OBJ_APP_EFFECT01>].wipe_copy = 0
+
+#command $$gate_open_particle(object)
+
+
+//---------------------------------------------------------------------------
+// ダウンバースト
+//---------------------------------------------------------------------------
+#macro	@ダウンバースト(@wipe_no(3), @wipe_time(-1))
+	back.object[<OBJ_APP_EFFECT01>].create_movie_loop(ef_downburst, 1)
+	back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_BG>
+	$$set_image_center_rep(back.object[<OBJ_APP_EFFECT01>])
+	@wipe(@wipe_no,  @wipe_time)
+
+#macro	@ダウンバースト_雨(@wipe_no(3), @wipe_time(-1))
+	back.object[<OBJ_APP_EFFECT01>].create_movie_loop(ef_downburst_rain, 1)
+	back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_BG>
+	$$set_image_center_rep(back.object[<OBJ_APP_EFFECT01>])
+	@wipe(@wipe_no,  @wipe_time)
+
+#macro	@ダウンバースト_縦パン(@wipe_no(3), @src_y(0), @dst_y(0), @move_time(10000), @speed_mode(0), @scale(1500), @offset_x(0))
+	back.object[<OBJ_APP_EFFECT01>].set_scale(@scale, @scale)
+	back.object[<OBJ_APP_EFFECT01>].x += @offset_x
+	back.object[<OBJ_APP_EFFECT01>].y = @src_y
+	back.object[<OBJ_APP_EFFECT01>].y_eve.set(@dst_y, @move_time, 0, @speed_mode)
+	@wipe(@wipe_no)
+
+#macro	@ダウンバースト_横パン(@wipe_no(3), @src_x(0), @dst_x(0), @move_time(10000), @speed_mode(0), @scale(1500), @offset_y(0))
+	back.object[<OBJ_APP_EFFECT01>].set_scale(@scale, @scale)
+	back.object[<OBJ_APP_EFFECT01>].x = @src_x
+	back.object[<OBJ_APP_EFFECT01>].x_eve.set(@dst_x, @move_time, 0, @speed_mode)
+	back.object[<OBJ_APP_EFFECT01>].y += @offset_y
+	@wipe(@wipe_no)
+
+#macro	@ダウンバースト_ズーム(@wipe_no(3), @src_scale(1000), @dst_scale(1000), @zoom_time(10000), @speed_mode(0), @scale(1500))
+	$$set_scale_eve(back.object[<OBJ_APP_EFFECT01>], @src_scale, @dst_scale, @zoom_time, 0, @speed_mode)
+	@wipe(@wipe_no)
+
+#macro	@ダウンバースト_終了
+	front.object[<OBJ_APP_EFFECT01>].wipe_copy = 0
+
+#macro	@ダウンバースト_葉_準備(@wipe_copy(1), @layer(<LAYER_BG_FILTER>))
+	@ダウンバースト_葉(-1)
+	back.object[<OBJ_APP_EFFECT02>].layer = @layer
+	back.object[<OBJ_APP_EFFECT02>].wipe_copy = @wipe_copy
+
+#macro	@ダウンバースト_葉_準備_ループなし(@layer(<LAYER_BG_FILTER>))
+	back.object[<OBJ_APP_EFFECT02>].create_movie(ef_downburst_lief, 1)
+	back.object[<OBJ_APP_EFFECT02>].layer = @layer
+	back.object[<OBJ_APP_EFFECT02>].tr_Eve.set(0, 2000, 8000, 0)
+	$$set_image_center_rep(back.object[<OBJ_APP_EFFECT02>])
+
+#macro	@ダウンバースト_葉_終了
+	front.object[<OBJ_APP_EFFECT02>].wipe_copy = 0
+
+#macro	@ダウンバースト_赤葉_準備(@wipe_copy(1), @layer(<LAYER_BG_FILTER>))
+	@ダウンバースト_葉(-1)
+	back.object[<OBJ_APP_EFFECT02>].color_add_r = 128
+	back.object[<OBJ_APP_EFFECT02>].layer = @layer
+	back.object[<OBJ_APP_EFFECT02>].wipe_copy = @wipe_copy
+
+
+//---------------------------------------------------------------------------
+// ダウンバーストシーンの背景色補正
+//---------------------------------------------------------------------------
+#macro	@ダウンバーストの前背景補正
+	@ダウンバースト背景補正(24, 8)
+
+#macro	@ダウンバースト背景補正(@dark(48), @add_r(16))
+	back.object[<OBJ_BG>].dark = @dark
+	back.object[<OBJ_BG>].color_add_r = @add_r
+
+//---------------------------------------------------------------------------
+// 同棲編ラスト災厄シーンの背景色補正
+//---------------------------------------------------------------------------
+#macro	@同棲編ラスト災厄の前背景補正
+	@ダウンバースト背景補正(32, 16)
+	back.object[<OBJ_BG>].mono = 96
+
+#macro	@同棲編ラスト災厄の前背景補正_空
+	@ダウンバースト背景補正(96, 0)
+	back.object[<OBJ_BG>].mono = 128
+
+
+//---------------------------------------------------------------------------
+// モノクロ薄め（CG_SP11あたりと乖離しすぎないよう）
+//---------------------------------------------------------------------------
+#macro	@薄いモノクロ(@mono(128))
+	back.effect[0].mono = @mono
+	back.effect[0].wipe_copy = 1
+
+
+//---------------------------------------------------------------------------
+// 麦の腕が光る
+//---------------------------------------------------------------------------
+#macro	@麦の腕が光る(@change_time(1000), @delay_time(1000), @src_scale(1000), @dst_scale(1000))
+	back.object[<OBJ_APP_EFFECT02>].create_movie_loop(ef_wind_dust01, 1)
+	if( @src_scale != @dst_scale ) {
+		back.object[<OBJ_APP_EFFECT02>].set_scale(@src_scale, @src_scale)
+		back.object[<OBJ_APP_EFFECT02>].scale_x_eve.set(@dst_scale, @change_time, @delay_time, 2)
+		back.object[<OBJ_APP_EFFECT02>].scale_y_eve.set(@dst_scale, @change_time, @delay_time, 2)
+	}
+	back.object[<OBJ_APP_EFFECT02>].layer = <LAYER_BG_FILTER>
+	back.object[<OBJ_APP_EFFECT02>].blend = 1
+	back.object[<OBJ_APP_EFFECT02>].color_add_r_eve.set(128, @change_time, @delay_time, 1)
+	back.object[<OBJ_APP_EFFECT02>].bright = 255
+	back.object[<OBJ_APP_EFFECT02>].bright_eve.set(0, @change_time, @delay_time, 2)
+	back.object[<OBJ_APP_EFFECT02>].wipe_copy = 1
+	$$set_image_center_rep(back.object[<OBJ_APP_EFFECT02>])
+
+#macro	@麦の腕が光る終了
+	front.object[<OBJ_APP_EFFECT02>].wipe_copy = 0
+
+//---------------------------------------------------------------------------
+// 風
+//---------------------------------------------------------------------------
+#macro	@風_スピカ(@type(0), @wipe_no(3), @wipe_time(-1))
+	$$sp_wind(@type)
+	@wipe(@wipe_no,  @wipe_time)
+
+#macro	@風_スピカフィルター
+	back.object[<OBJ_APP_EFFECT02>].create(ef_eye_catch_filter, 1)
+	back.object[<OBJ_APP_EFFECT02>].wipe_copy = 1
+
+#command $$sp_wind(int)
+#command $$create_sp_wind_particle(object)
+
+
+//---------------------------------------------------------------------------
+// スピカ消える
+//---------------------------------------------------------------------------
+#macro	@スピカ消える
+	$$sp_del_particle(back.object[<OBJ_APP_EFFECT02>])
+
+#command $$sp_del_particle(object)
+
+
+//---------------------------------------------------------------------------
+// 小森健アナグラム
+//---------------------------------------------------------------------------
+#macro	@小森健アナグラム(@type, @text)
+	$$kn_anagram(front.object[<OBJ_APP_EFFECT01>], @type, @text)
+
+#command $$kn_anagram(object, int, str)
+
+
+//---------------------------------------------------------------------------
+// 電撃が横に走る
+//---------------------------------------------------------------------------
+#macro	@電撃(@type(0))
+	@todo("ムービー：ムービーにしたほうがよさそう")
+	front.object[<OBJ_APP_EFFECT01>].create(ef_spark01, 1)
+	front.object[<OBJ_APP_EFFECT01>].blend = 1
+	front.object[<OBJ_APP_EFFECT01>].layer = <LAYER_SCREEN>
+	$$set_image_center_rep(front.object[<OBJ_APP_EFFECT01>])
+	front.object[<OBJ_APP_EFFECT01>].patno_eve.loop(0, 15, 500, 0, 0)
+	front.object[<OBJ_APP_EFFECT01>].set_clip(1, 0, 0, 1920, 1080)
+	if( @type == 0 )
+	{
+		front.object[<OBJ_APP_EFFECT01>].clip_left = 1920
+		disp
+		front.object[<OBJ_APP_EFFECT01>].clip_left_eve.set(0, 200, 0, 0)
+		front.object[<OBJ_APP_EFFECT01>].clip_right_eve.set(0, 200, 200, 0)
+	}
+	else
+	{
+		front.object[<OBJ_APP_EFFECT01>].clip_right = 0
+		disp
+		front.object[<OBJ_APP_EFFECT01>].clip_right_eve.set(1920, 200, 0, 0)
+		front.object[<OBJ_APP_EFFECT01>].clip_left_eve.set(1920, 200, 200, 0)
+	}
+
+
+//---------------------------------------------------------------------------
+// 同棲編ラスト画像文字
+//---------------------------------------------------------------------------
+// 同棲編ラストの画像文字
+#macro	@同棲編ラスト文字(@patno, @text, @koe_no(-1), @chara_no(-1), @name(""), @wait_time(500), @end_wait_time(0))
+	close
+	@同棲編ラスト文字準備(@patno, @text, @koe_no, @chara_no, @name)	// 準備
+	@wipe(0, 1500)												// 表示
+	@同棲編ラスト文字待ち(@wait_time, @end_wait_time)				// 待ち
+
+// 同棲編ラストの画像文字／裏待機
+#macro	@同棲編ラスト文字準備(@patno, @text, @koe_no(-1), @chara_no(-1), @name(""))
+	@画像文字(ef_eternicle_text, @patno, @name, @text,		// 画像文字作成
+			  @koe_no, @chara_no)
+	back.object[<OBJ_IMAGE_TEXT>].wipe_copy = 1		// ワイプコピーオン
+
+// 同棲編ラストの画像文字／声終了待ち
+#macro	@同棲編ラスト文字待ち(@wait_time(500), @end_wait_time(0), @wipe_time(1500))
+	koe_wait_key									// 声終了待ち
+	@waitkey(@wait_time)							// 待ち時間
+	front.object[<OBJ_IMAGE_TEXT>].wipe_copy = 0	// ワイプコピーオフ
+	@wipe(0, @wipe_time)									// 消去
+	@waitkey(@end_wait_time)						// 待ち時間
+
+// 同棲編ラストフィルター
+#macro	@同棲編ラストフィルター
+	back.object[<OBJ_APP_EFFECT02>].create(ef_eye_catch_filter, 1)
+	back.object[<OBJ_APP_EFFECT02>].wipe_copy = 1
+
+#macro	@同棲編ラストフィルター終了
+	front.object[<OBJ_APP_EFFECT02>].wipe_copy = 0
+
+#macro	@同棲編ラスト_スピカ通常(@bs_name, @wipe_no(4))
+	@風の回廊_中層
+	@bs_set(@bs_name)
+	@bg(bg_white, @wipe_no)
+
+#macro	@同棲編ラスト_スピカ心(@bs_name, @wipe_no(3), @direct(0))
+	@bg(bg_siro, -1)
+	@寝起きフィルター(0)
+	if( @direct == 0 ) {
+		@bs_set(@bs_name, -50, -2000, 2500)
+		@bs_move_x(sq, 50, 8000)
+	} elseif( @direct == 1 ) {
+		@bs_set(@bs_name, 0, -2050, 2500)
+		@bs_move_y(sq, 50, 8000)
+	} else {
+		@bs_set(@bs_name, 0, -2000, 2600)
+	}
+	@bs_tr(sq, 255, 128)
+	back.object[$$get_bs_index(sq)].bright = 64
+	@wipe(@wipe_no)
+
+#macro @スピカ光る(@bright(32))
+	back.object[$$get_bs_obj_index("sp")].bright = @bright
+
+#macro	@同棲編ラスト_スピカ消える
+	back.object[<OBJ_APP_EFFECT01>].create_movie_loop(ef_wind_dust01, 1)
+	back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_ALL_FILTER>
+	back.object[<OBJ_APP_EFFECT01>].blend = 1
+	back.object[<OBJ_APP_EFFECT01>].color_add_b = 192
+	$$set_image_center_rep(back.object[<OBJ_APP_EFFECT01>])
+	$$set_scale_eve(back.object[<OBJ_APP_EFFECT01>], 1000, 5000, 10000, 0, 1)
+	back.object[<OBJ_APP_EFFECT02>].create_movie_loop(ef_wind_dust02, 1)
+	back.object[<OBJ_APP_EFFECT02>].layer = <LAYER_ALL_FILTER>
+	back.object[<OBJ_APP_EFFECT02>].blend = 1
+	back.object[<OBJ_APP_EFFECT02>].color_add_b = 192
+	$$set_image_center_rep(back.object[<OBJ_APP_EFFECT02>])
+	$$set_scale_eve(back.object[<OBJ_APP_EFFECT02>], 1000, 5000, 10000, 0, 1)
+	disp
+	front.object[$$get_bs_obj_index("sp")].bright_eve.set(255, 5000, 0, 0)
+
+#macro	@同棲編ラスト_災厄消える(@wipe_no(121))
+	back.object[<OBJ_APP_EFFECT01>].create_movie_loop(ef_wind_dust01, 1)
+	back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_ALL_FILTER>
+	back.object[<OBJ_APP_EFFECT01>].blend = 1
+	back.object[<OBJ_APP_EFFECT01>].color_add_b = 192
+	back.object[<OBJ_APP_EFFECT01>].tr_eve.set(0, 5000, 10000, 0)
+	back.object[<OBJ_APP_EFFECT01>].bright = 255
+	back.object[<OBJ_APP_EFFECT01>].bright_eve.set(0, 3000, 0, 2)
+	$$set_image_center_rep(back.object[<OBJ_APP_EFFECT01>])
+	$$set_scale_eve(back.object[<OBJ_APP_EFFECT01>], 1000, 5000, 10000, 0, 2)
+	back.object[<OBJ_APP_EFFECT02>].create_movie_loop(ef_wind_dust02, 1)
+	back.object[<OBJ_APP_EFFECT02>].layer = <LAYER_ALL_FILTER>
+	back.object[<OBJ_APP_EFFECT02>].blend = 1
+	back.object[<OBJ_APP_EFFECT02>].color_add_b = 192
+	back.object[<OBJ_APP_EFFECT02>].tr_eve.set(0, 5000, 10000, 0)
+	back.object[<OBJ_APP_EFFECT02>].bright = 255
+	back.object[<OBJ_APP_EFFECT02>].bright_eve.set(0, 3000, 0, 2)
+	$$set_image_center_rep(back.object[<OBJ_APP_EFFECT02>])
+	$$set_scale_eve(back.object[<OBJ_APP_EFFECT02>], 1000, 5000, 10000, 0, 2)
+	@wipe(@wipe_no)
+
+//---------------------------------------------------------------------------
+// 同棲編ラストスピカモノローグ
+//---------------------------------------------------------------------------
+#macro	@同棲編ラストスピカモノローグ(@patno, @text, @koe_no(-1), @chara_no(-1), @name(""), @wait_time(500), @end_wait_time(0))
+	@同棲編ラストスピカモノローグ準備(@patno, @text, @koe_no, @chara_no, @name)	// 準備
+	@wipe(0, 1500)												// 表示
+	@同棲編ラストスピカモノローグ待ち(@wait_time, @end_wait_time)				// 待ち
+
+#macro	@同棲編ラストスピカモノローグ準備(@patno, @text, @koe_no(-1), @chara_no(-1), @name(""))
+	@画像文字(ef_sp_text, @patno, @name, @text,		// 画像文字作成
+			  @koe_no, @chara_no)
+	back.object[<OBJ_IMAGE_TEXT>].wipe_copy = 1		// ワイプコピーオン
+
+#macro	@同棲編ラストスピカモノローグ待ち(@wait_time(500), @end_wait_time(0), @wipe_time(2000))
+	koe_wait_key									// 声終了待ち
+	@waitkey(@wait_time)							// 待ち時間
+	front.object[<OBJ_IMAGE_TEXT>].wipe_copy = 0	// ワイプコピーオフ
+	@wipe(0, @wipe_time)									// 消去
+	@waitkey(@end_wait_time)						// 待ち時間
+
+
+//---------------------------------------------------------------------------
+// 愛乃コックピット
+//---------------------------------------------------------------------------
+#macro	@コックピット_準備
+	back.object[<OBJ_APP_EFFECT03>].create(ef_cutin_cockpit, 1)
+	back.object[<OBJ_APP_EFFECT03>].layer = <LAYER_SCREEN>
+	back.object[<OBJ_APP_EFFECT03>].wipe_copy = 1
+
+#macro	@コックピット_終了
+	front.object[<OBJ_APP_EFFECT03>].wipe_copy = 0
+
+#macro	@愛乃ペンダント光る
+	back.object[<OBJ_APP_EFFECT03>].create(ef_cutin_ainospendant, 1, 440, -350, 1)
+	$$set_image_center_rep(back.object[<OBJ_APP_EFFECT03>])
+	back.object[<OBJ_APP_EFFECT03>].set_scale(1500, 1500)
+	back.object[<OBJ_APP_EFFECT03>].layer = <LAYER_SCREEN>
+	$$set_pos_y_eve(back.object[<OBJ_APP_EFFECT03>], -400, -350, 1000, 0, 2)
+	@wipe(3)
+	@se(SE_elec_pendant_glow)
+	@愛乃ペンダント光った後(0)
+
+#macro	@愛乃ペンダント光った後(@wipe_no)
+	back.object[<OBJ_APP_EFFECT03>].create(ef_cutin_ainospendant, 1, 440, -350)
+	$$set_image_center_rep(back.object[<OBJ_APP_EFFECT03>])
+	back.object[<OBJ_APP_EFFECT03>].bright = 255
+	back.object[<OBJ_APP_EFFECT03>].bright_eve.set(0, 1500, 0, 2)
+	back.object[<OBJ_BG>].bright = 160
+	back.object[<OBJ_BG>].bright_eve.set(0, 1500, 0, 2)
+	back.object[<OBJ_APP_EFFECT03>].set_scale(1500, 1500)
+	back.object[<OBJ_APP_EFFECT03>].layer = <LAYER_SCREEN>
+	@wipe(@wipe_no)
+
+#macro	@愛乃成長_カットイン
+	@寝起きフィルター(0)
+	@cg_move(cg_ai11_0305, -1, 0, 0, -100, 0, 3000, 2, 4000)
+	back.object[<OBJ_CG>].blend = 4
+	back.object[<OBJ_CG>].tr = 128
+	back.object[<OBJ_CG>].layer = <LAYER_SCREEN> + 1
+	@wipe(4)
+
+
+//---------------------------------------------------------------------------
+// 淡雪2816ＥＤ／ＨＩ１１切り替え演出
+//---------------------------------------------------------------------------
+#macro	@淡雪2816ＥＤ_ＨＩ１１切り替え演出(@wipe_no(5))
+	back.object[<OBJ_APP_EFFECT01>].create_movie_loop(ef_wind_dust06, 1)
+	back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_SCREEN>
+	back.object[<OBJ_APP_EFFECT01>].blend = 1
+	@wipe(@wipe_no)
+
+//---------------------------------------------------------------------------
+// 淡雪エピローグ用背景
+//---------------------------------------------------------------------------
+#macro	@淡雪エピローグ背景(@wipe_no(3), @wipe_time(-1), @type(6))
+	@bg(bg_siro, -1)
+	back.object[<OBJ_BG>].color_r = 64
+	back.object[<OBJ_BG>].color_b = 128
+	back.object[<OBJ_BG>].color_rate = 128
+	back.object[<OBJ_BG>].tr_eve.turn(192, 64, 10000, 0, 0)
+	back.object[<OBJ_BG>].bright_eve.turn(96, 192, 5000, 0, 0)
+	back.object[<OBJ_APP_EFFECT01>].create_movie_loop(ef_wind_dust + math.tostr_zero(@type, 2), 1)
+	back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_BG_FILTER>
+	back.object[<OBJ_APP_EFFECT01>].blend = 4
+	back.object[<OBJ_APP_EFFECT01>].wipe_copy = 1
+	back.object[<OBJ_APP_EFFECT02>].create(ef_eye_catch_filter, 1)
+	back.object[<OBJ_APP_EFFECT02>].color_r = 64
+	back.object[<OBJ_APP_EFFECT02>].color_b = 128
+	back.object[<OBJ_APP_EFFECT02>].color_rate = 128
+	@wipe(@wipe_no, @wipe_time)
+
+
+#command $$get_day : int
+
+//---------------------------------------------------------------------------
+// 小詠ラスト消える
+//---------------------------------------------------------------------------
+#macro	@小詠ラスト消える
+	back.object[<OBJ_APP_EFFECT01>].create_movie_loop(ef_wind_dust01, 1)
+	back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_ALL_FILTER>
+	back.object[<OBJ_APP_EFFECT01>].blend = 1
+	back.object[<OBJ_APP_EFFECT01>].color_add_b = 192
+	$$set_image_center_rep(back.object[<OBJ_APP_EFFECT01>])
+	$$set_scale_eve(back.object[<OBJ_APP_EFFECT01>], 1000, 5000, 10000, 0, 1)
+	back.object[<OBJ_APP_EFFECT02>].create_movie_loop(ef_wind_dust02, 1)
+	back.object[<OBJ_APP_EFFECT02>].layer = <LAYER_ALL_FILTER>
+	back.object[<OBJ_APP_EFFECT02>].blend = 1
+	back.object[<OBJ_APP_EFFECT02>].color_add_b = 192
+	$$set_image_center_rep(back.object[<OBJ_APP_EFFECT02>])
+	$$set_scale_eve(back.object[<OBJ_APP_EFFECT02>], 1000, 5000, 10000, 0, 1)
+	disp
+
+
+//---------------------------------------------------------------------------
+// 立ち絵アルミアスっぽく
+//---------------------------------------------------------------------------
+#macro	@立ち絵アルミアスっぽく(@bs_name)
+	back.object[$$get_bs_obj_index(@bs_name)].blend = 4
+
+
+//---------------------------------------------------------------------------
+// 小詠手紙
+//---------------------------------------------------------------------------
+// 小詠手紙の画像文字
+#macro	@小詠手紙文字(@patno, @text, @koe_no(-1), @chara_no(-1), @name(""), @wait_time(500), @end_wait_time(0))
+	@小詠手紙文字準備(@patno, @text, @koe_no, @chara_no, @name)	// 準備
+	@wipe(0, 1500)												// 表示
+	@小詠手紙文字待ち(@wait_time, @end_wait_time)				// 待ち
+
+// 小詠手紙の画像文字／裏待機
+#macro	@小詠手紙文字準備(@patno, @text, @koe_no(-1), @chara_no(-1), @name(""))
+	@画像文字(ef_ky_text, @patno, @name, @text,		// 画像文字作成
+			  @koe_no, @chara_no)
+	back.object[<OBJ_IMAGE_TEXT>].wipe_copy = 1		// ワイプコピーオン
+
+// 小詠手紙の画像文字／声終了待ち
+#macro	@小詠手紙文字待ち(@wait_time(500), @end_wait_time(0), @wipe_time(2000))
+	koe_wait_key									// 声終了待ち
+	@waitkey(@wait_time)							// 待ち時間
+	front.object[<OBJ_IMAGE_TEXT>].wipe_copy = 0	// ワイプコピーオフ
+	@wipe(0, @wipe_time)									// 消去
+	@waitkey(@end_wait_time)						// 待ち時間
+
+// 小詠手紙フィルター
+#macro	@小詠手紙フィルター
+	back.object[<OBJ_APP_EFFECT02>].create(ef_eye_catch_filter, 1)
+	back.object[<OBJ_APP_EFFECT02>].wipe_copy = 1
+
+#macro	@小詠手紙フィルター終了
+	front.object[<OBJ_APP_EFFECT02>].wipe_copy = 0
+
+
+//---------------------------------------------------------------------------
+// 六花手紙
+//---------------------------------------------------------------------------
+// 六花手紙の画像文字
+#macro	@六花手紙文字(@patno, @text, @koe_no(-1), @chara_no(-1), @name(""), @wait_time(500), @end_wait_time(0))
+	@六花手紙文字準備(@patno, @text, @koe_no, @chara_no, @name)	// 準備
+	@wipe(0, 1500)												// 表示
+	@六花手紙文字待ち(@wait_time, @end_wait_time)				// 待ち
+
+// 六花手紙の画像文字／裏待機
+#macro	@六花手紙文字準備(@patno, @text, @koe_no(-1), @chara_no(-1), @name(""))
+	@画像文字(ef_rk_text, @patno, @name, @text,		// 画像文字作成
+			  @koe_no, @chara_no)
+	back.object[<OBJ_IMAGE_TEXT>].wipe_copy = 1		// ワイプコピーオン
+
+// 六花手紙の画像文字／声終了待ち
+#macro	@六花手紙文字待ち(@wait_time(500), @end_wait_time(0), @wipe_time(2000))
+	koe_wait_key									// 声終了待ち
+	@waitkey(@wait_time)							// 待ち時間
+	front.object[<OBJ_IMAGE_TEXT>].wipe_copy = 0	// ワイプコピーオフ
+	@wipe(0, @wipe_time)									// 消去
+	@waitkey(@end_wait_time)						// 待ち時間
+
+// 六花手紙フィルター
+#macro	@六花手紙フィルター
+	back.object[<OBJ_APP_EFFECT02>].create(ef_eye_catch_filter, 1)
+	back.object[<OBJ_APP_EFFECT02>].wipe_copy = 1
+
+#macro	@六花手紙フィルター終了
+	front.object[<OBJ_APP_EFFECT02>].wipe_copy = 0
+
+
+//---------------------------------------------------------------------------
+// テスト中
+//---------------------------------------------------------------------------
+#macro	@bg_r(@filename(@disp_bg), @wipe_no(-1))
+	@bg_set(@filename, 1000, -50, 0)
+	@wipe(@wipe_no)
+
+#macro	@bg_l(@filename(@disp_bg), @wipe_no(-1))
+	@bg_set(@filename, 1000, 50, 0)
+	@wipe(@wipe_no)
+
+#macro	@bg_c@filename(@disp_bg), @wipe_no(-1))
+	@bg_set(@filename, 1000, 0, 0)
+	@wipe(@wipe_no)
+
+
+
+
+//---------------------------------------------------------------------------
+// 汎用エンジンに入れたほうがよさそうなもの
+//---------------------------------------------------------------------------
+
+// 背景カットイン
+#macro	@bg_cutin(@bg_name, @wipe_no(0), @bg_offset_x(0), @bg_offset_y(0), @cutin_mask_file(cutin_mask_c01))
+	mask[1].init
+	mask[1].create(@cutin_mask_file)
+	mask[1].x = -100
+	mask[1].x_eve.set(0, 500, 0, 2)
+	
+	$$set_bg_object(back.object[<OBJ_APP_EFFECT01>], @bg_name)
+	back.object[<OBJ_APP_EFFECT01>].x += @bg_offset_x
+	back.object[<OBJ_APP_EFFECT01>].y += @bg_offset_y
+	back.object[<OBJ_APP_EFFECT01>].mask_no = 1
+	back.object[<OBJ_APP_EFFECT01>].layer = <LAYER_CG>
+	back.object[<OBJ_APP_EFFECT01>].wipe_copy = 1
+	$$set_pos_x_eve(back.object[<OBJ_APP_EFFECT01>], -100, 0, 500, 0, 2)
+	@wipe(@wipe_no)
+
+// 背景カットイン消去
+#macro	@bg_cutin_del(@wipe_no(0))
+	front.object[<OBJ_APP_EFFECT01>].wipe_copy = 0
+	$$set_pos_x_eve(front.object[<OBJ_APP_EFFECT01>], 0, 100, 500, 0, 2)
+	mask[1].x_eve.set(100, 500, 0, 2)
+	@wipe(@wipe_no)
+
+#macro	@シネスコ逆アニメ(@time(1000), @speed_mode(0), @length(150), @red(0), @green(0), @blue(0), @tr(255), @offset_layer(0))
+	$$set_child_object(back.object[<OBJ_EFFECT_CINEMA_SCOPE>], 2)
+	back.object[<OBJ_EFFECT_CINEMA_SCOPE>].layer = <LAYER_SCREEN>
+	back.object[<OBJ_EFFECT_CINEMA_SCOPE>].child[0].create_rect(0, 0, <SCREEN_WIDTH>, <SCREEN_CENTER_Y> + @length, @red, @green, @blue, @tr, 1)
+	back.object[<OBJ_EFFECT_CINEMA_SCOPE>].child[1].create_rect(0, 0, <SCREEN_WIDTH>, <SCREEN_CENTER_Y> + @length, @red, @green, @blue, @tr, 1)
+	back.object[<OBJ_EFFECT_CINEMA_SCOPE>].child[0].y = 0
+	back.object[<OBJ_EFFECT_CINEMA_SCOPE>].child[0].y_eve.set(-<SCREEN_CENTER_Y>, @time, 0, @speed_mode)
+	back.object[<OBJ_EFFECT_CINEMA_SCOPE>].child[1].y = <SCREEN_CENTER_Y> - @length
+	back.object[<OBJ_EFFECT_CINEMA_SCOPE>].child[1].y_eve.set(<SCREEN_HEIGHT> - @length, @time, 0, @speed_mode)
+
+// イベントＣＧ拡大
+#macro	@cg_scale(@scale(1500), @time(30000), @speed_mode(0))
+	$$set_scale_eve(front.object[<OBJ_CG>], front.object[<OBJ_CG>].scale_x, @scale, @time, 0, @speed_mode)
+
+// 立ち絵顔キラキラ
+#macro	@顔キラキラ(@pos_x(960), @pos_y(340), @r(220))
+	$$create_face_kirakira_particle(back.object[<OBJ_APP_EFFECT01>], @pos_x, @pos_y, @r)
+
+#command $$create_face_kirakira_particle(object, int, int, int)

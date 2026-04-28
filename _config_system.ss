@@ -202,15 +202,6 @@ command $$show_config_system_scene_object(property $stage : stage)
 	$stage.object[1].patno = 1
 	$stage.object[2].patno = 0
 	
-	// 体験版処理（レコードボタンは押せない）
-	$stage.object[@ボタン_コンフィグ_レコード表示_有効].set_button_state_disable
-	$stage.object[@ボタン_コンフィグ_レコード表示_無効].set_button_state_disable
-	
-	// 体験版処理（タブレットモードボタンは押せない）
-	$stage.object[@ボタン_コンフィグ_タブレットモード_右].set_button_state_disable
-	$stage.object[@ボタン_コンフィグ_タブレットモード_左].set_button_state_disable
-	$stage.object[@ボタン_コンフィグ_タブレットモード_無効].set_button_state_disable
-	
 	// アニメ―ション前に画面を更新する
 	disp
 	

@@ -43,9 +43,6 @@ command $$show_qmenu_scene_object(property $stage : stage)
 	property $i
 	property $button_list : intlist[7]
 	
-	// 体験版処理（レコードボタンは押せない）
-	$stage.object[@ボタン_クイックメニュー_レコード].set_button_state_disable
-	
 	// アニメーションするボタンの順番を設定する
 	$button_list.sets(0, @ボタン_クイックメニュー_オート,
 						 @ボタン_クイックメニュー_セーブ,

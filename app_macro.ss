@@ -18,6 +18,22 @@
 
 #z00
 
+//---------------------------------------------------------------------------
+// 各視点のメッセージウィンドウフィルターを設定する
+//---------------------------------------------------------------------------
+command $$set_character_view_filter(property $chara_no)
+{
+	switch( $chara_no ) {
+	case(0)		front.mwnd[get_mwnd].init_filter_file					// 麦視点
+	case(1)		front.mwnd[get_mwnd].set_filter_file("_mw_filter02")	// スピカ視点
+	case(2)		front.mwnd[get_mwnd].set_filter_file("_mw_filter03")	// 愛乃視点
+	case(3)		front.mwnd[get_mwnd].set_filter_file("_mw_filter04")	// 淡雪視点
+	case(4)		front.mwnd[get_mwnd].set_filter_file("_mw_filter05")	// 小詠視点
+	case(5)		front.mwnd[get_mwnd].set_filter_file("_mw_filter06")	// 六花視点
+	case(6)		front.mwnd[get_mwnd].set_filter_file("_mw_filter07")	// その他視点
+	}
+}
+
 //-----------------------------------------------------------------
 // ユーザー制御中にパッド入力を監視するフレームアクション
 //-----------------------------------------------------------------
@@ -490,7 +506,7 @@ command $$create_fire_spark_particle(property $obj : object, property $type)
 //-----------------------------------------------------------------
 // アイキャッチ（日付変更）
 //-----------------------------------------------------------------
-command $$eye_catch(property $date : str, property $bg_name : str)
+command $$eye_catch(property $date : str, property $bg_name : str, property $type)
 {
 	property $i
 	property $j
@@ -498,22 +514,6 @@ command $$eye_catch(property $date : str, property $bg_name : str)
 	property $day
 	property $digit
 	property $day_tmp
-	
-	// 仮
-	if( $bg_name == "ef_avan_bg02" ) {
-		switch( $date ) {
-		case("0702")		$bg_name = "b_bg008_06"
-		case("0703")		$bg_name = "b_bg009_01"
-		case("0704")		$bg_name = "b_bg016_01"
-		case("0705")		$bg_name = "b_bg002_01"
-		case("0706")		$bg_name = "b_bg001_07"
-		case("0709")		$bg_name = "b_bg006_01"
-		case("0710")		$bg_name = "b_bg005_01"
-		case("0711")		$bg_name = "b_bg018_01"
-		case("0712")		$bg_name = "b_bg999_01"
-		case("0713")		$bg_name = "b_bg009_01"
-		}
-	}
 	
 	@fade_w(4)
 	
@@ -536,50 +536,63 @@ command $$eye_catch(property $date : str, property $bg_name : str)
 	
 	$$create_eye_catch_particle(back.object[<OBJ_APP_EFFECT01>].child[2])
 	
-	back.object[<OBJ_APP_EFFECT01>].child[3].create(ef_eye_catch_day, 1, 1290, 311)
-	
-	$$set_tr_eve(back.object[<OBJ_APP_EFFECT01>].child[3], 0, 255, 1500, 1500, 2)
-	$$set_pos_y_rep_eve(back.object[<OBJ_APP_EFFECT01>].child[3], 0, 30, 0, 1500, 1500, 2)
-	
-	$date_num = $date.tonum
-	if( $date_num >= 800 ) {
-		$day = ($date_num - 800) + 31 + 1
-	} else {
-		$day = ($date_num - 701) + 1
-	}
-	
-	// 経過日数の桁数を調べる
-	$digit = 1
-	$day_tmp = $day
-	while( 1 )
+	// 共通ルートアイキャッチ
+	if( $type == 0 )
 	{
-		if( $day_tmp < 10 ) {
-			break
+		back.object[<OBJ_APP_EFFECT01>].child[3].create(ef_eye_catch_day, 1, 1290, 311)
+		
+		$$set_tr_eve(back.object[<OBJ_APP_EFFECT01>].child[3], 0, 255, 1500, 1500, 2)
+		$$set_pos_y_rep_eve(back.object[<OBJ_APP_EFFECT01>].child[3], 0, 30, 0, 1500, 1500, 2)
+		
+		$date_num = $date.tonum
+		if( $date_num >= 800 ) {
+			$day = ($date_num - 800) + 31
+		} else {
+			$day = ($date_num - 701) + 1
 		}
 		
-		$day_tmp = $day_tmp / 10
-		$digit += 1
-	}
-	
-	// 経過日数（数字）を作成する
-	back.object[<OBJ_APP_EFFECT01>].child[4].disp = 1
-	back.object[<OBJ_APP_EFFECT01>].child[4].child.resize($digit)
-	
-	for( $i = 0, $i < $digit, $i += 1 )
-	{
+		// 経過日数の桁数を調べる
+		$digit = 1
 		$day_tmp = $day
-		
-		back.object[<OBJ_APP_EFFECT01>].child[4].child[$i].create_number(ef_eye_catch_number, 1, 1482 + $i * 104, 465)
-		back.object[<OBJ_APP_EFFECT01>].child[4].child[$i].set_number_param(1, 0, 0, 0, 0, 0)
-		
-		for( $j = 0, $j < $digit - 1 - $i, $j += 1 )
+		while( 1 )
 		{
+			if( $day_tmp < 10 ) {
+				break
+			}
+			
 			$day_tmp = $day_tmp / 10
+			$digit += 1
 		}
-		back.object[<OBJ_APP_EFFECT01>].child[4].child[$i].set_number($day_tmp % 10)
 		
-		$$set_tr_eve(back.object[<OBJ_APP_EFFECT01>].child[4].child[$i], 0, 255, 1500, 2500 + $i * 500, 2)
-		$$set_pos_y_rep_eve(back.object[<OBJ_APP_EFFECT01>].child[4].child[$i], 0, 30, 0, 1500, 2500 + $i * 500, 2)
+		// 経過日数（数字）を作成する
+		back.object[<OBJ_APP_EFFECT01>].child[4].disp = 1
+		back.object[<OBJ_APP_EFFECT01>].child[4].child.resize($digit)
+		
+		for( $i = 0, $i < $digit, $i += 1 )
+		{
+			$day_tmp = $day
+			
+			back.object[<OBJ_APP_EFFECT01>].child[4].child[$i].create_number(ef_eye_catch_number, 1, 1482 + $i * 104, 465)
+			back.object[<OBJ_APP_EFFECT01>].child[4].child[$i].set_number_param(1, 0, 0, 0, 0, 0)
+			
+			for( $j = 0, $j < $digit - 1 - $i, $j += 1 )
+			{
+				$day_tmp = $day_tmp / 10
+			}
+			back.object[<OBJ_APP_EFFECT01>].child[4].child[$i].set_number($day_tmp % 10)
+			
+			$$set_tr_eve(back.object[<OBJ_APP_EFFECT01>].child[4].child[$i], 0, 255, 1500, 2500 + $i * 500, 2)
+			$$set_pos_y_rep_eve(back.object[<OBJ_APP_EFFECT01>].child[4].child[$i], 0, 30, 0, 1500, 2500 + $i * 500, 2)
+		}
+	}
+	
+	// 個別ルートアイキャッチ
+	else
+	{
+		back.object[<OBJ_APP_EFFECT01>].child[3].create(ef_title_logo, 1, 1560, 550)
+		$$set_image_center(back.object[<OBJ_APP_EFFECT01>].child[3])
+		back.object[<OBJ_APP_EFFECT01>].child[3].tr = 0
+		back.object[<OBJ_APP_EFFECT01>].child[3].tr_eve.set(255, 2000, 1500, 0)
 	}
 	
 	@wipe(5)
@@ -925,6 +938,33 @@ command $$create_black_wind(property $obj : object)
 }
 
 //-----------------------------------------------------------------
+// 赤風（災厄周り）
+//-----------------------------------------------------------------
+command $$create_red_wind(property $obj : object, property $type)
+{
+	$obj.disp = 1
+	$obj.wipe_copy = 1
+	$obj.layer = <LAYER_CG> + 1
+	$obj.color_add_r = 255
+	$obj.child.resize(2)
+	
+	if( $type )
+	{
+		$obj.child[0].create_movie_loop(ef_dark_wind01, 1)
+		$$set_image_center_rep($obj.child[0])
+		$obj.child[0].set_scale(2000, 2000)
+		$obj.child[0].blend = 3
+		$obj.child[0].tr = 128
+	}
+	else
+	{
+		$obj.child[0].create_movie_loop(ef_dark_wind01, 1)
+		$obj.child[0].blend = 4
+		$obj.child[0].tr = 128
+	}
+}
+
+//-----------------------------------------------------------------
 // 過剰集中
 //-----------------------------------------------------------------
 command $$concentration_start(property $obj : object)
@@ -988,15 +1028,33 @@ command $$concentration_start(property $obj : object)
 
 command $$concentration_end(property $obj : object)
 {
-	property $scale
+	property $src_scale
+	property $dst_scale
 	
 	// 背景
 	if( front.object[<OBJ_BG>].get_file_name != "" )
 	{
 		back.object[<OBJ_BG>].create_copy_from(front.object[<OBJ_BG>])
-		$scale = back.object[<OBJ_BG>].scale_x
-		$$set_scale_eve(back.object[<OBJ_BG>], $scale, $scale - 750, 750, 250, 2)
+		$src_scale = back.object[<OBJ_BG>].scale_x
+		$dst_scale = $src_scale - 750
+		
+		if( $dst_scale < 1000 ) {
+			$dst_scale = 1000
+		}
+		
+		$$set_scale_eve(back.object[<OBJ_BG>], $src_scale, $dst_scale, 750, 250, 2)
 	}
+}
+
+command $$concentration_dust(property $obj : object)
+{
+	// 塵系ムービーを準備
+	$obj.create_movie_loop(ef_wind_dust04, 1, ready_only = 1)
+	$obj.layer = <LAYER_ALL_FILTER> - 1
+	$obj.blend = 4
+	$obj.wipe_copy = 1
+	$$set_image_center_rep($obj)
+	$obj.set_scale(1750, 1750)
 }
 
 //---------------------------------------------------------------------------
@@ -1008,4 +1066,425 @@ command $$fa_hi_stamp(property $fa : frameaction, property $obj : object)
 	
 	$obj.scale_x = math.timetable(l[0], 0, 1250, [0, 250, 950, 2], [250, 400, 1000, 1])
 	$obj.scale_y = $obj.scale_x
+}
+
+
+//---------------------------------------------------------------------------
+// 風の回廊門が現れるパーティクル
+//---------------------------------------------------------------------------
+command $$gate_open_particle(property $obj : object)
+{
+	$obj.disp = 1
+	$obj.child.resize(2)
+	
+	//===================================================================
+	// 後面
+	//===================================================================
+	// パーティクル(直線)を作成する
+	$$create_particle($obj.child[0], ef_dust,			// 使用するオブジェクト, 画像
+						64, 1,							// パーティクルの数, 中心座標を画像中心にするか(g00で設定しているなら0)
+						3000, 5000,						// 消滅する時間(最小、最大)
+						-20, 20, -10, -30				// 動く方向x(最小、最大), 動く方向y(最小、最大)
+	)
+	// パーティクルの発生範囲を矩形にする
+	$$set_particle_shape_to_box($obj.child[0],			// 使用するオブジェクト
+								-150, 150, -100, 100	// 矩形範囲(x最小、x最大、y最小、y最大)
+	)
+
+	// パーティクルの拡縮率を設定する
+	$$set_particle_scale($obj.child[0], 1, 				// 使用するオブジェクト, アスペクト比を維持するか
+						250, 500, 250, 500				// 拡縮率(x最小、x最大、y最小、y最大)
+	)
+	// パーティクルのディレイ時間を設定する
+	$$set_particle_delay($obj.child[0],					// 使用するオブジェクト
+						1250, 3000						// ディレイ時間(最小、最大)
+	)
+	// パーティクルの色を設定する
+	$$set_particle_color($obj.child[0],					// 使用するオブジェクト
+						"#ffcf40", "#fffcea", 128		// カラーコード範囲(最小、最大), どれぐらい色を適用するか
+	)
+	
+	$obj.child[0].set_pos(960, 704)							// 座標を[960, 1080]にする
+	$obj.child[0].blend = 1									// 合成タイプを加算にする
+	$obj.child[0].frame_action.start(-1, "$$fa_particle")	// パーティクルの実行
+
+	//===================================================================
+	// 前面
+	//===================================================================
+	// パーティクル(直線)を作成する
+	$$create_particle($obj.child[1], ef_light_ball,		// 使用するオブジェクト, 画像
+						48, 1,							// パーティクルの数, 中心座標を画像中心にするか(g00で設定しているなら0)
+						3000, 5000,						// 消滅する時間(最小、最大)
+						-60, 60, -90, -150				// 動く方向x(最小、最大), 動く方向y(最小、最大)
+	)
+	// パーティクルの発生範囲を矩形にする
+	$$set_particle_shape_to_box($obj.child[1],			// 使用するオブジェクト
+								-550, 550, 650, 750		// 矩形範囲(x最小、x最大、y最小、y最大)
+	)
+
+	// パーティクルの拡縮率を設定する
+	$$set_particle_scale($obj.child[1], 1, 				// 使用するオブジェクト, アスペクト比を維持するか
+						1500, 2000, 1500, 2000			// 拡縮率(x最小、x最大、y最小、y最大)
+	)
+	// パーティクルのディレイ時間を設定する
+	$$set_particle_delay($obj.child[1],					// 使用するオブジェクト
+						0, 500							// ディレイ時間(最小、最大)
+	)
+	// パーティクルの色を設定する
+	$$set_particle_color($obj.child[1],					// 使用するオブジェクト
+						"#ffcf40", "#fffcea", 128		// カラーコード範囲(最小、最大), どれぐらい色を適用するか
+	)
+	// パーティクルをワンショットにする
+	$$set_particle_oneshot($obj.child[1])
+	
+	$obj.child[1].set_pos(960, 704)							// 座標を[960, 1580]にする
+	$obj.child[1].blend = 1									// 合成タイプを加算にする
+	$obj.child[1].frame_action.start(-1, "$$fa_particle")	// パーティクルの実行}
+}
+
+
+//-----------------------------------------------------------------
+// スピカ（風）
+//-----------------------------------------------------------------
+command $$sp_wind(property $type)
+{
+	property $filename : str
+	property $pos_y
+	property $scale
+	
+	switch( $type ) {
+	case(0)
+		$filename = ef_wind04
+		$pos_y = 200
+		$scale = 1000
+	case(1)
+		$filename = ef_wind04
+		$pos_y = <SCREEN_HEIGHT> - 200
+		$scale = -1000
+	case(2)
+		$filename = ef_wind03
+		$pos_y = 200
+		$scale = 1000
+	}
+	
+	back.object[<OBJ_APP_EFFECT03>].disp = 1
+	back.object[<OBJ_APP_EFFECT03>].child.resize(2)
+	
+	back.object[<OBJ_APP_EFFECT03>].child[0].create_movie(ef_wind04, 1, 0, $pos_y, real_time = 1, auto_free = 0)
+	back.object[<OBJ_APP_EFFECT03>].child[0].layer = <LAYER_ALL_FILTER>
+	back.object[<OBJ_APP_EFFECT03>].child[0].scale_y = $scale
+	back.object[<OBJ_APP_EFFECT03>].child[0].blend = 1
+	
+	$$create_sp_wind_particle(back.object[<OBJ_APP_EFFECT03>].child[1])
+}
+
+// パーティクル（スピカ風）
+command $$create_sp_wind_particle(property $obj : object)
+{
+	$obj.disp = 1
+	$obj.child.resize(2)
+	
+	$obj.tr = 0
+	$obj.tr_eve.set(255, 2000, 1000, 2)
+	
+	// パーティクル(直線)を作成する
+	$$create_particle($obj.child[0], ef_light_ball,		// 使用するオブジェクト, 画像
+						64, 1,							// パーティクルの数, 中心座標を画像中心にするか(g00で設定しているなら0)
+						6000, 8000,						// 消滅する時間(最小、最大)
+						2, 6, -8, 4						// 動く方向x(最小、最大), 動く方向y(最小、最大)
+	)
+	// パーティクルの発生範囲を矩形にする
+	$$set_particle_shape_to_box($obj.child[0],			// 使用するオブジェクト
+								0, 1720, 406, 686		// 矩形範囲(x最小、x最大、y最小、y最大)
+	)
+	
+	// パーティクルの拡縮率を設定する
+	$$set_particle_scale($obj.child[0], 1, 				// 使用するオブジェクト, アスペクト比を維持するか
+						150, 175, 150, 175				// 拡縮率(x最小、x最大、y最小、y最大)
+	)
+	// パーティクルのディレイ時間を設定する
+	$$set_particle_delay($obj.child[0],					// 使用するオブジェクト
+						0, 2000						// ディレイ時間(最小、最大)
+	)
+	// パーティクルの回転角を設定する
+	$$set_particle_rotate($obj.child[0], 0,				// 使用するオブジェクト, 角度を固定するか
+						-1800, -1800, 1800, 1800		// 回転角(最小、最大)
+	)
+	// パーティクルの色を設定する
+	$$set_particle_color($obj.child[0],					// 使用するオブジェクト
+						"#658bc5", "#63c8eb", 192		// カラーコード範囲(最小、最大), どれぐらい色を適用するか
+	)
+	// パーティクルのパターン番号を設定する
+	$$set_particle_patno($obj.child[0], 				// 使用するオブジェクト
+						0, 1							// パターン番号(最小、最大)
+	)
+	// 自動縮小アニメーションを設定する
+	$$set_particle_auto_scale($obj.child[0], 0)
+	// パーティクルをワンショットにする
+	$$set_particle_oneshot($obj.child[0])
+	
+	$obj.child[0].frame_action.start(-1, "$$fa_particle")	// パーティクルの実行
+	$obj.child[0].blend = 1									// 合成タイプを加算にする
+	$obj.child[0].bright = 128
+	
+	// パーティクル(直線)を作成する
+	$$create_particle($obj.child[1], ef_light_ball,		// 使用するオブジェクト, 画像
+						64, 1,							// パーティクルの数, 中心座標を画像中心にするか(g00で設定しているなら0)
+						6000, 8000,						// 消滅する時間(最小、最大)
+						1, 4, -5, 2						// 動く方向x(最小、最大), 動く方向y(最小、最大)
+	)
+	// パーティクルの発生範囲を矩形にする
+	$$set_particle_shape_to_box($obj.child[1],			// 使用するオブジェクト
+								0, 1720, 406, 686		// 矩形範囲(x最小、x最大、y最小、y最大)
+	)
+	
+	// パーティクルの拡縮率を設定する
+	$$set_particle_scale($obj.child[1], 1, 				// 使用するオブジェクト, アスペクト比を維持するか
+						50, 100, 150, 100				// 拡縮率(x最小、x最大、y最小、y最大)
+	)
+	// パーティクルのディレイ時間を設定する
+	$$set_particle_delay($obj.child[1],					// 使用するオブジェクト
+						0, 2000						// ディレイ時間(最小、最大)
+	)
+	// パーティクルの回転角を設定する
+	$$set_particle_rotate($obj.child[1], 0,				// 使用するオブジェクト, 角度を固定するか
+						-1800, -1800, 1800, 1800		// 回転角(最小、最大)
+	)
+	// パーティクルの色を設定する
+	$$set_particle_color($obj.child[1],					// 使用するオブジェクト
+						"#98fb98", "#1e90ff", 192		// カラーコード範囲(最小、最大), どれぐらい色を適用するか
+	)
+	// パーティクルのパターン番号を設定する
+	$$set_particle_patno($obj.child[1], 				// 使用するオブジェクト
+						0, 1							// パターン番号(最小、最大)
+	)
+	// 自動縮小アニメーションを設定する
+	$$set_particle_auto_scale($obj.child[1], 0)
+	// パーティクルをワンショットにする
+	$$set_particle_oneshot($obj.child[1])
+	
+	$obj.child[1].frame_action.start(-1, "$$fa_particle")	// パーティクルの実行
+	$obj.child[1].blend = 1									// 合成タイプを加算にする
+	$obj.child[1].bright = 128
+}
+
+//---------------------------------------------------------------------------
+// スピカ消える
+//---------------------------------------------------------------------------
+command $$sp_del_particle(property $obj : object)
+{
+	$obj.disp = 1
+	$obj.layer = <LAYER_SCREEN>
+	$obj.child.resize(2)
+	
+	// パーティクル(直線)を作成する
+	$$create_particle($obj.child[0], ef_light_ball,		// 使用するオブジェクト, 画像
+						64, 1,							// パーティクルの数, 中心座標を画像中心にするか(g00で設定しているなら0)
+						6000, 8000,						// 消滅する時間(最小、最大)
+						-20, 20, -40, -20						// 動く方向x(最小、最大), 動く方向y(最小、最大)
+	)
+	// パーティクルの発生範囲を矩形にする
+	$$set_particle_shape_to_box($obj.child[0],			// 使用するオブジェクト
+								0, 1920, 1180, 1280		// 矩形範囲(x最小、x最大、y最小、y最大)
+	)
+	
+	// パーティクルの拡縮率を設定する
+	$$set_particle_scale($obj.child[0], 1, 				// 使用するオブジェクト, アスペクト比を維持するか
+						550, 1675, 550, 1675				// 拡縮率(x最小、x最大、y最小、y最大)
+	)
+	// パーティクルのディレイ時間を設定する
+	$$set_particle_delay($obj.child[0],					// 使用するオブジェクト
+						0, 1000							// ディレイ時間(最小、最大)
+	)
+	// パーティクルの回転角を設定する
+	$$set_particle_rotate($obj.child[0], 0,				// 使用するオブジェクト, 角度を固定するか
+						-1800, -1800, 1800, 1800		// 回転角(最小、最大)
+	)
+	// パーティクルの色を設定する
+	$$set_particle_color($obj.child[0],					// 使用するオブジェクト
+						"#658bc5", "#63c8eb", 192		// カラーコード範囲(最小、最大), どれぐらい色を適用するか
+	)
+	// パーティクルのパターン番号を設定する
+	$$set_particle_patno($obj.child[0], 				// 使用するオブジェクト
+						0, 1							// パターン番号(最小、最大)
+	)
+	// 自動縮小アニメーションを設定する
+	$$set_particle_auto_scale($obj.child[0], 0)
+	// パーティクルをワンショットにする
+	$$set_particle_oneshot($obj.child[0])
+	
+	$obj.child[0].frame_action.start(-1, "$$fa_particle")	// パーティクルの実行
+	$obj.child[0].blend = 1									// 合成タイプを加算にする
+	
+	// パーティクル(直線)を作成する
+	$$create_particle($obj.child[1], ef_light_ball,		// 使用するオブジェクト, 画像
+						64, 1,							// パーティクルの数, 中心座標を画像中心にするか(g00で設定しているなら0)
+						6000, 8000,						// 消滅する時間(最小、最大)
+						-50, 50, -100, -60				// 動く方向x(最小、最大), 動く方向y(最小、最大)
+	)
+	// パーティクルの発生範囲を矩形にする
+	$$set_particle_shape_to_box($obj.child[1],			// 使用するオブジェクト
+								0, 1920, 1180, 1280		// 矩形範囲(x最小、x最大、y最小、y最大)
+	)
+	
+	// パーティクルの拡縮率を設定する
+	$$set_particle_scale($obj.child[1], 1, 				// 使用するオブジェクト, アスペクト比を維持するか
+						550, 1600, 550, 1600				// 拡縮率(x最小、x最大、y最小、y最大)
+	)
+	// パーティクルのディレイ時間を設定する
+	$$set_particle_delay($obj.child[1],					// 使用するオブジェクト
+						0, 1000							// ディレイ時間(最小、最大)
+	)
+	// パーティクルの回転角を設定する
+	$$set_particle_rotate($obj.child[1], 0,				// 使用するオブジェクト, 角度を固定するか
+						-1800, -1800, 1800, 1800		// 回転角(最小、最大)
+	)
+	// パーティクルの色を設定する
+	$$set_particle_color($obj.child[1],					// 使用するオブジェクト
+						"#98fb98", "#1e90ff", 192		// カラーコード範囲(最小、最大), どれぐらい色を適用するか
+	)
+	// パーティクルのパターン番号を設定する
+	$$set_particle_patno($obj.child[1], 				// 使用するオブジェクト
+						0, 1							// パターン番号(最小、最大)
+	)
+	// 自動縮小アニメーションを設定する
+	$$set_particle_auto_scale($obj.child[1], 0)
+	// パーティクルをワンショットにする
+	$$set_particle_oneshot($obj.child[1])
+	
+	$obj.child[1].frame_action.start(-1, "$$fa_particle")	// パーティクルの実行
+	$obj.child[1].blend = 1									// 合成タイプを加算にする
+}
+
+
+//-----------------------------------------------------------------
+// 小森健アナグラム
+//-----------------------------------------------------------------
+command $$kn_anagram(property $obj : object, property $type, property $text : str)
+{
+	property $i
+	property $len
+	property $target_x : intlist
+	
+	@todo("演出：仮。もう少しきれいにする")
+	$$add_msgback(-1, -1, "", $text)
+	
+	$len = 9		// 9文字
+	
+	if( $type == 0 )
+	{
+		@黒フィルター全体(128)
+		@wipe(3)
+		
+		@todo("ＳＥ：一文字ごとにあったほうがよさそう")
+		$obj.disp = 1
+		$obj.layer = <LAYER_ALL_FILTER>
+		$obj.child.resize($len)
+		
+		for( $i = 0, $i < $len, $i += 1 )
+		{
+			$obj.child[$i].create(ef_NKOMREIOK, 1, 285 + 155 * $i - 1920 / 2, 480 - 1080 / 2, $i)
+			timewait_key(350)
+		}
+		timewait_key(500)
+	}
+	else
+	{
+		// それぞれの文字がどの文字位置に向かうか設定する
+		$target_x.resize($len)
+		$target_x.sets(0, 8, 0, 1, 2, 4, 7, 5, 3, 6)
+		
+		for( $i = 0, $i < $len, $i += 1 )
+		{
+			$obj.child[$i].x_eve.set(285 + 155 * $target_x[$i] - 1920 / 2, 1000, 0, 0)
+		}
+		
+		$obj.child[0].x_eve.wait
+		
+		for( $i = 0, $i < $len, $i += 1 )
+		{
+			$obj.child[$i].x_eve.end
+		}
+		
+		timewait_key(500)
+		@フィルター終了
+		
+		@todo("ＳＥ：テッテレー的なものを入れる")
+		@se(se_fanfare01)
+		
+		timewait_key(2000)
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 後で整理する
+command $$get_day : int
+{
+	// いったん適当に
+	if( @日付_月 == 7 )
+	{
+		return (@日付_日)
+	}
+	elseif( @日付_月 == 8 )
+	{
+		return (@日付_日 + 31)
+	}
+}
+
+//-----------------------------------------------------------------
+// 立ち絵顔キラキラ
+//-----------------------------------------------------------------
+command $$create_face_kirakira_particle(property $obj : object, property $pos_x, property $pos_y, property $r)
+{
+	$obj.disp = 1
+	$obj.set_pos($pos_x, $pos_y)
+	$obj.layer = <LAYER_CG> - 1
+	$obj.child.resize(1)
+	$obj.blend = 1
+	
+	$$create_particle_radial($obj.child[0], ef_particle01,	// 使用するオブジェクト, 画像
+						24, 1,								// パーティクルの数, 中心座標を画像中心にするか(g00で設定しているなら0)
+						2000, 3000,							// 消滅する時間(最小、最大)
+						80, 110								// 動きの速さ(最小、最大)
+	)
+	$$set_particle_shape_to_circle($obj.child[0], 		// 使用するオブジェクト
+						$r								// 半径
+	)
+	$$set_particle_scale($obj.child[0], 1, 				// 使用するオブジェクト, アスペクト比を維持するか
+						250, 400, 250, 400				// 拡縮率(x最小、x最大、y最小、y最大)
+	)
+	$$set_particle_rotate($obj.child[0], 0,				// 使用するオブジェクト, 角度を固定するか
+						-1800, 1800, -1800, 1800		// 回転角(最小、最大)
+	)
+	$$set_particle_delay($obj.child[0], 				// 使用するオブジェクト
+						0, 1500							// ディレイ時間(最小、最大)
+	)
+	$$set_particle_patno($obj.child[0], 				// 使用するオブジェクト
+						0, 1							// パターン番号(最小、最大)
+	)
+	$$set_particle_color($obj.child[0],					// 使用するオブジェクト
+						"#f0e68c", "#ffd700", 128		// カラーコード範囲(最小、最大), どれぐらい色を適用するか
+	)
+	$$set_particle_auto_tr($obj.child[0], 0)			// 使用するオブジェクト, 不透明度を自動で下げるか
+	
+	$obj.child[0].frame_action.start(-1, "$$fa_particle")
 }

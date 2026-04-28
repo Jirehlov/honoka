@@ -17,6 +17,7 @@
 <CHAPTER_PLAY>  = 0				// チャプター再生中フラグを初期化
 <CHAPTER_PAGE>  = 0				// チャプターで選択しているページを初期化
 <CHAPTER_THUMB> = 0				// チャプターで選択しているサムネイルを初期化
+<EXTRA_MODE> = 0				// エクストラ中フラグを初期化
 
 $$menu_control_enabled			// メニュー画面でのユーザー制御を設定する
 
@@ -27,7 +28,7 @@ $$menu_control_enabled			// メニュー画面でのユーザー制御を設定する
 if( <FIRSTBOOT> == 0 )
 {
 	//ダミーファイル認証
-	//system.check_dummy_file_once("dummy", 132, "haizakura1")
+	system.check_dummy_file_once("dummy", 244, "anemoi_X7mQ2pL9a")
 	
 	$$first_boot
 	

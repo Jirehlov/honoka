@@ -59,6 +59,7 @@
 #define		<FIRSTBOOT>						Z[00]		// 初回起動フラグ
 #define		<EFFECT_CUT>					Z[01]		// todo test
 
+#define		<EXTRA_MODE>					Z[03]		// エクストラ中か(0:エクストラでない／1:エクストラ中)
 #define		<AUTO_SAVE>						Z[04]		// オートセーブ(0:無効／1:有効)
 #define		<RCLICK_MODE>					Z[05]		// 右クリック動作(0:クイックメニュー／1:メッセージウィンドウ消去／2:コンフィグ／3:セーブ／4:ロード)
 #define		<SIDEBAR_MODE>					Z[06]		// サイドバー動作(0:無効／1:右／2:左)

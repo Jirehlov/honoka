@@ -680,7 +680,12 @@ command $$tablet_mode_on(property $mode)
 	<TABLET_MODE> = $mode
 	
 	// メッセージウィンドウの枠番号をタブレットモードで使用する枠番号に設定する
-	set_waku(__TABLET_MODE_WAKU_NO)
+	if( get_mwnd == 0 ) {
+		set_waku(__TABLET_MODE_WAKU_NO)
+		
+		// ※特殊処理／各視点のフィルターを読み込む
+		$$set_character_view_filter(@視点フラグ)
+	}
 	
 	// サイドバーが有効の場合は終了する
 	if( <SIDEBAR_MODE> != <SIDEBAR_MODE_OFF> ) {
@@ -697,7 +702,12 @@ command $$tablet_mode_off
 	<TABLET_MODE> = <TABLET_MODE_OFF>
 	
 	// メッセージウィンドウの枠番号をデフォルトで使用する枠番号に設定する
-	set_waku(__DEFAULT_MW_WAKU_NO)
+	if( get_mwnd == 0 ) {
+		set_waku(__DEFAULT_MW_WAKU_NO)
+		
+		// ※特殊処理／各視点のフィルターを読み込む
+		$$set_character_view_filter(@視点フラグ)
+	}
 	
 	// メッセージウィンドウボタンを更新する
 	$$update_mwbtn

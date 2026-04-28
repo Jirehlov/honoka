@@ -21,6 +21,7 @@
 	#property	$tab_max		// 最大タブ
 	#property	$page_max		// 最大ページ
 	#property	$thumb_max		// ページ中の最大サムネイル数
+	#property	$thumb_type		// サムネイルタイプ(0=通常ボタン／1=オーバーレイボタン)
 	
 	#property	$cg_list : strlist		// イベントＣＧリスト
 
@@ -90,6 +91,32 @@ while( 1 )
 		// 入力制御を再開始する
 		$$input_start(excall.front, <OBJBTN_GROUP_NO_EXCALL>)
 		$select_btn = -2
+	}
+	
+	// トラックリストボタンが押されている場合
+	if( $select_btn == @ボタン_エクストラ_サウンド_トラックリスト )
+	{
+		farcall("__sys_extra_sound")
+		
+		$$set_joypad_focus_button(@ボタン_エクストラ_サウンド_トラックリスト)
+		$$rebuild_scene_object(@エクストラ_ＣＧ_描画更新_タブ切り替え)		// シーンオブジェクトを再構築する
+	}
+	
+	// 
+	if( $thumb_type == 1 ) {
+		$$update_overlay_thumb_button(excall.front)
+	}
+	
+	if( $select_btn == @ボタン_エクストラ_ヘッダー_レコード ) {
+		
+		// 全てのシステムオブジェクトのワイプコピーフラグをオフにする
+		$$off_system_front_wipe_copy_all
+		
+		jump(__sys_record)
+	}
+	if( $select_btn == @ボタン_エクストラ_ヘッダー_タイトル )
+	{
+		break
 	}
 	
 	// アプリケーション側の処理を更新する
@@ -239,6 +266,31 @@ command $$get_extra_cg_page_index : int
 }
 
 //---------------------------------------------------------------------------
+// 現在のページのサムネイル最大数を取得する
+//---------------------------------------------------------------------------
+command $$get_extra_cg_page_thumb_max : int
+{
+	property $i
+	
+	for( $i = 0, $i < @エクストラ_ＣＧ_サムネイル最大数, $i += 1 )
+	{
+		if( $cg_list[$page * $thumb_max + $i] == "" ) {
+			break
+		}
+	}
+	
+	return ($i)
+}
+
+//---------------------------------------------------------------------------
+// 現在の最大ページ数を設定する
+//---------------------------------------------------------------------------
+command $$set_extra_cg_page_max(property $max)
+{
+	$page_max = $max
+}
+
+//---------------------------------------------------------------------------
 // シーンデータを設定する
 //---------------------------------------------------------------------------
 command $$set_scene_data(property $stage : stage)
@@ -301,6 +353,7 @@ command $$next_page
 command $$update_scene_object(property $stage : stage)
 {
 	property $i
+	property $len
 	property $filename : str
 	
 	// タブボタンの更新
@@ -328,16 +381,45 @@ command $$update_scene_object(property $stage : stage)
 	// サムネイルボタンの更新
 	for( $i = 0, $i < $thumb_max, $i += 1 )
 	{
-		// サムネイルのファイル名を取得
-		$filename = $stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].get_file_name
-		$filename = $filename.left_len($filename.len - 2)
-		
-		$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].change_file($filename + math.tostr_zero($page * $thumb_max + ($i + 1), 2))
-		
-		if( $$open_cg($page * $thumb_max + $i) ) {
-			$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].set_button_state_normal
-		} else {
-			$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].set_button_state_disable
+		if( $thumb_type == 0 )
+		{
+			// サムネイルのファイル名を取得
+			$filename = $stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].get_file_name
+			$filename = $filename.left_len($filename.len - 2)
+			
+			$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].change_file($filename + math.tostr_zero($page * $thumb_max + ($i + 1), 2))
+		}
+		else
+		{
+			// サムネイルのファイル名を取得
+			$len = $cg_list[$page * $thumb_max + $i].len
+			$filename = $stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[0].get_file_name
+			$filename = $filename.left_len($filename.len - $len) + $cg_list[$page * $thumb_max + $i]
+			
+			if( $$exists_g00($filename) && $cg_list[$page * $thumb_max + $i] != "" )
+			{
+				$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].disp = 1
+				$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[0].change_file($filename)
+			}
+			else
+			{
+				$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].disp = 0
+			}
+			
+			if( $$open_cg($page * $thumb_max + $i) )
+			{
+				$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[0].disp = 1
+				$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[1].disp = 1
+				$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[2].tr = 0
+				$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].set_button_state_normal
+			}
+			else
+			{
+				$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[0].disp = 0
+				$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[1].disp = 0
+				$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[2].tr = 0
+				$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].set_button_state_disable
+			}
 		}
 	}
 }
@@ -350,6 +432,8 @@ command $$rebuild_scene_object(property $redraw_type)
 	// すべてのシーンオブジェクトを裏画面にコピーする
 	$$copy_all_scene_object_to_back
 	
+	$$update_all_thumb_diff
+	
 	// 裏画面のシーンオブジェクトを更新する
 	$$update_scene_object(excall.back)
 	
@@ -361,6 +445,103 @@ command $$rebuild_scene_object(property $redraw_type)
 	
 	// 入力制御を再開始する
 	$$input_start(excall.front, <OBJBTN_GROUP_NO_EXCALL>)
+}
+
+//---------------------------------------------------------------------------
+// オーバーレイサムネイルボタンを作成する
+//---------------------------------------------------------------------------
+command $$create_overlay_thumb_button(property $stage : stage, property $filename : str, property $x, property $y, property $offset_x, property $offset_y, property $w, property $h)
+{
+	property $i
+	property $len
+	
+	$len = $w * $h
+	for( $i = 0, $i < $len, $i += 1 )
+	{
+		$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i], $filename, $x + $offset_x * ($i % $w), $y + $offset_y * ($i / $w), @ボタン_エクストラ_ＣＧ_サムネイル + $i, <OBJBTN_GROUP_NO_EXCALL>, 4)
+		
+		$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child.resize(3)
+		$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[0].create("_extra_cg_thumb_" + $cg_list[0], 1, __EXTRA_CG_THUMB_OFFSET_X, __EXTRA_CG_THUMB_OFFSET_Y)
+		$$create_thumb_diff($stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[1], $page * $thumb_max + $i)
+		$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[2].create("_extra_cg_thumb_overlay", 1, __EXTRA_CG_THUMB_OFFSET_X, __EXTRA_CG_THUMB_OFFSET_Y)
+	}
+	
+	// サムネイルボタンをオーバーレイタイプとして扱う
+	$thumb_type = 1
+	
+	$$update_all_thumb_diff
+}
+
+command $$update_overlay_thumb_button(property $stage : stage)
+{
+	property $i
+	property $len
+	property $button_no
+	
+	for( $i = 0, $i < @エクストラ_ＣＧ_サムネイル最大数, $i += 1 )
+	{
+		if( $stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].f.get_size == 0 ) {
+			continue
+		}
+		
+		$button_no = $stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].get_button_no
+		
+		if( (syscom.check_joypad_mode == 0 && ($$get_hit_btn == $button_no || $$get_pushed_btn == $button_no) || syscom.check_joypad_mode == 1 && $$get_joypad_focus_button == $button_no) == 0 )
+		{
+			$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[2].tr = 0
+		}
+		else
+		{
+			$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[2].tr = 128
+		}
+	}
+}
+
+
+command $$create_thumb_diff(property $obj : object, property $thumb_index)
+{
+	$obj.disp = 1
+	$obj.child.resize(3)
+	$obj.child[0].create(_extra_cg_diff_bg, 1, 204, 119)
+	
+	$obj.child[1].create_number(_extra_cg_diff_number, 1, 172, 120)
+	$obj.child[1].set_number_param(2, 0, 0, 0, 0, 0)
+	$obj.child[1].set_number($$get_extra_cg_diff_cnt($page * $thumb_max + $thumb_index, 0))
+	$obj.child[2].create_number(_extra_cg_diff_number, 1, 218, 120)
+	$obj.child[2].set_number_param(2, 0, 0, 0, 0, 0)
+	$obj.child[2].set_number($$get_extra_cg_diff_cnt($page * $thumb_max + $thumb_index, 1))
+}
+
+command $$update_all_thumb_diff
+{
+	property $i
+	property $len
+	property $button_no
+	
+	for( $i = 0, $i < @エクストラ_ＣＧ_サムネイル最大数, $i += 1 )
+	{
+		if( excall.back.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].f.get_size == 0 ) {
+			continue
+		}
+		
+		excall.back.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[1].child[1].create_number(_extra_cg_diff_number, 1, 172, 120)
+		excall.back.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[1].child[1].set_number_param(2, 0, 0, 0, 0, 0)
+		excall.back.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[1].child[1].set_number($$get_extra_cg_diff_cnt($page * $thumb_max + $i, 0))
+		excall.back.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[1].child[2].create_number(_extra_cg_diff_number, 1, 218, 120)
+		excall.back.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[1].child[2].set_number_param(2, 0, 0, 0, 0, 0)
+		excall.back.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].child[1].child[2].set_number($$get_extra_cg_diff_cnt($page * $thumb_max + $i, 1))
+	}
+}
+
+//---------------------------------------------------------------------------
+// イベントＣＧの達成率を作成する
+//---------------------------------------------------------------------------
+command $$create_extra_cg_complete_number(property $obj : object, property $filename : str, property $x, property $y)
+{
+	$$create_ui_number_image($obj, $filename, $x, $y)
+	
+	$obj.set_number_param(3, 0, 0, 0, 0, 0)
+	$obj.set_number(cgtable.get_look_percent)
 }
 
 //---------------------------------------------------------------------------

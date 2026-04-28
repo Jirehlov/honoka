@@ -27,8 +27,8 @@ $$excall_ready			// システムコールを準備する
 
 // エクストラのモード選択シーンが無効の場合はイベントＣＧ鑑賞シーンへ
 if( __EXTRA_MODE_SELECT_SCENE == 0 ) {
-	syscom.call_ex(__sys_extra_cg)
-	return
+	farcall(__sys_extra_cg)
+	goto #end
 }
 
 $$build_extra_mode_select_scene(excall.back)			// エクストラモード選択シーンを構成する
@@ -85,6 +85,9 @@ while( 1 )
 
 $$off_system_front_wipe_copy_all					// 全てのシステムオブジェクトのワイプコピーフラグをオフにする
 $$hide_extra_mode_select_scene_object(excall.front)	// シーンオブジェクトを非表示にする
+
+#end
+
 $$excall_free										// システムコールを解放する
 
 return

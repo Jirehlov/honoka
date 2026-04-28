@@ -187,7 +187,7 @@
 #command $$create_ui_scrollview(object, str, int, int, int, object, object,		// スクロールビューを作成する
 									int, int, int, int, int, int, int, int, int)
 #command $$set_ui_scrollview_margin(object, int)								// スクロールビューのスクロール範囲のマージンを設定する
-#command $$set_ui_scrollview_group(object, int)									// 指定したオブジェクトをスクロールビューのグループとして設定する
+#command $$set_ui_scrollview_group(object, object, int)							// 指定したオブジェクトをスクロールビューのグループとして設定する
 #command $$trigger_ui_scrollview_scroll(object, int)							// スクロールの外部入力トリガーを実行する
 
 

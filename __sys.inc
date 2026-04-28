@@ -434,6 +434,7 @@
 #command $$get_config_charakoe_from_btn_no(int) : int			// コンフィグのキャラクター音量設定で使用するボタン番号からキャラクター音声の登録番号を取得する
 #command $$get_config_charakoe_btn_no_from_func_no(int) : int	// コンフィグのキャラクター音量設定で使用する動作番号からボタン番号を取得する
 #command $$set_config_charakoe_sample_voice(int, int)			// コンフィグのキャラクター音量設定で使用するサンプルボイスを設定する
+#command $$overwrite_config_charakoe_sample_voice(int, int, int)// コンフィグのキャラクター音量設定で使用するサンプルボイスを設定する（上書き）
 #command $$get_config_charakoe_sample_voice(int) : int			// コンフィグのキャラクター音量設定で使用するサンプルボイスを取得する
 
 // シーンオブジェクト関連
@@ -754,11 +755,14 @@
 //---------------------------------------------------------------------------
 // 最大数
 #replace	@エクストラ_ＣＧ_タブ最大数					10
-#replace	@エクストラ_ＣＧ_ページ最大数				10
-#replace	@エクストラ_ＣＧ_サムネイル最大数			30
+#replace	@エクストラ_ＣＧ_ページ最大数				20
+#replace	@エクストラ_ＣＧ_サムネイル最大数			20
 
 // オブジェクト
-#replace	@オブジェクト_エクストラ_表示中のＣＧ		100
+#replace	@オブジェクト_エクストラ_表示中のＣＧ		200
+#replace	@イメージ_エクストラ_達成率_背景			201
+#replace	@イメージ_エクストラ_達成率_数値			202
+#replace	@イメージ_エクストラ_達成率_数値１００		203
 
 // ボタン
 #replace	@ボタン_エクストラ_ＣＧ_閉じる				11
@@ -777,7 +781,10 @@
 #replace	@エクストラ_ＣＧ_描画更新_ページ切り替え		1
 
 // データ取得
+#define		@エクストラ_ＣＧ_現在のタブ					$$get_extra_cg_tab_index
+#define		@エクストラ_ＣＧ_現在のページ				$$get_extra_cg_page_index
 #define		@現在表示中のＣＧファイル名					$$get_extra_cg_disp_filename
+#define		@エクストラ_ＣＧ達成率						cgtable.get_look_percent
 
 // データ関連
 #command $$set_extra_cg_thumb_max(int)						// イベントＣＧ鑑賞シーンの最大サムネイル数を設定する
@@ -788,7 +795,10 @@
 															// ※各タイトルごとにextra_settings.ssで設定
 #command $$get_extra_cg_tab_index : int						// 現在のタブを取得する
 #command $$get_extra_cg_page_index : int					// 現在のページを取得する
+#command $$get_extra_cg_page_thumb_max : int				// 現在のページのサムネイル最大数を取得する
+#command $$set_extra_cg_page_max(int)						// 現在の最大ページ数を設定する
 #command $$get_extra_cg_disp_filename : str					// 現在表示中のＣＧファイル名を取得する
+#command $$get_extra_cg_diff_cnt(int, int) : int			// 
 
 // シーンオブジェクト関連
 #command $$create_extra_cg_scene_object(stage)				// シーンオブジェクトを作成する
@@ -797,6 +807,9 @@
 #command $$show_extra_cg_scene_object(stage)				// シーンオブジェクトを表示する
 #command $$hide_extra_cg_scene_object(stage)				// シーンオブジェクトを非表示にする
 #command $$set_extra_cg_joypad_navigation(stage)			// パッド入力の遷移を設定する
+
+#command $$create_overlay_thumb_button(stage, str, int, int, int, int, int, int)		// オーバーレイサムネイルボタンを作成する
+#command $$create_extra_cg_complete_number(object, str, int, int)						// イベントＣＧの達成率を作成する
 
 #command $$show_extra_cg_diff(stage)					// イベントＣＧ鑑賞シーンのイベントＣＧを表示する
 #command $$change_extra_cg_diff(stage)					// イベントＣＧ鑑賞シーンで閲覧中のＣＧ差分を変更する
@@ -807,17 +820,27 @@
 // エクストラ／サウンド鑑賞
 //---------------------------------------------------------------------------
 // 最大数
-#replace	@エクストラ_サウンド_登録ＢＧＭ最大数			50
+#replace	@エクストラ_サウンド_登録ＢＧＭ最大数			70
 
 // ボタン
-#replace	@ボタン_エクストラ_サウンド_閉じる				11
-#replace	@ボタン_エクストラ_サウンド_再生				12
-#replace	@ボタン_エクストラ_サウンド_停止				13
-#replace	@ボタン_エクストラ_サウンド_前へ				14
-#replace	@ボタン_エクストラ_サウンド_次へ				15
-#replace	@ボタン_エクストラ_サウンド_サムネイル			16
+#replace	@ボタン_エクストラ_サウンド_閉じる				111
+#replace	@ボタン_エクストラ_サウンド_再生				112
+#replace	@ボタン_エクストラ_サウンド_停止				113
+#replace	@ボタン_エクストラ_サウンド_前へ				114
+#replace	@ボタン_エクストラ_サウンド_次へ				115
+#replace	@ボタン_エクストラ_サウンド_トラックリスト		116
+#replace	@ボタン_エクストラ_サウンド_サムネイル			117
 #define		@ボタン_エクストラ_サウンド_サムネイル最大		(@ボタン_エクストラ_サウンド_サムネイル + @エクストラ_サウンド_登録ＢＧＭ最大数)
 #define		@ボタン_エクストラ_サウンドスクロールビュー		(@ボタン_エクストラ_サウンド_サムネイル最大 + 1)
+
+#command $$init_extra_music_player							// サウンドプレイヤーの初期化（外部呼出し）
+#command $$update_extra_music_player(int) : int				// サウンドプレイヤーの更新（外部呼出し）
+#command $$update_extra_music_player_object(stage)			// サウンドプレイヤーオブジェクトの更新（外部呼出し）
+
+// データ取得
+#define		@エクストラ_サウンド_登録ＢＧＭ数				$$get_extra_music_cnt
+#define		@エクストラ_サウンド_再生中のＢＧＭ				$$get_extra_music_play_index
+#define		@ボタン_エクストラ_サウンド_再生中のＢＧＭ		(@ボタン_エクストラ_サウンド_サムネイル + $$get_extra_music_play_index)
 
 // データ関連
 #command $$set_extra_music(int, str)						// サウンド鑑賞シーンで再生するＢＧＭを設定する
@@ -825,6 +848,7 @@
 #command $$get_extra_music_cnt : int						// サウンド鑑賞シーンで再生するＢＧＭ数を取得する
 #command $$set_extra_music_list								// サウンド鑑賞シーンで再生するＢＧＭリストを設定する
 															// ※各タイトルごとにextra_settings.ssで設定
+#command $$get_extra_music_play_index : int					// サウンド鑑賞シーンで再生中のＢＧＭインデックスを取得する
 
 // シーンオブジェクト関連
 #command $$create_extra_sound_scene_object(stage)			// シーンオブジェクトを作成する
@@ -833,7 +857,30 @@
 #command $$hide_extra_sound_scene_object(stage)				// シーンオブジェクトを非表示にする
 #command $$set_extra_sound_joypad_navigation(stage)			// パッド入力の遷移を設定する
 
-#command $$create_extra_sound_play_button(object, str, int, int, int, int, int)		// サウンド鑑賞シーンで使用する再生ボタンを作成する
+#command $$create_extra_sound_play_button(object, str, int, int, int, int, int)					// サウンド鑑賞シーンで使用する再生ボタンを作成する
+#command $$create_extra_sound_volume_slider(object, str, int, int, int, int, int, int, int)		// サウンド鑑賞シーンで使用するＢＧＭ音量スライダーを作成する
+
+
+//---------------------------------------------------------------------------
+// エクストラ／サウンドプレイヤー
+//---------------------------------------------------------------------------
+
+// オブジェクト
+#replace	@イメージ_エクストラ_サウンド_背景				100
+#replace	@イメージ_エクストラ_サウンド_曲情報			101
+#replace	@スライダー_エクストラ_サウンド_音量			102
+
+#replace	@ボタン_エクストラ_ヘッダー_ギャラリー			105
+#replace	@ボタン_エクストラ_ヘッダー_レコード			106
+#replace	@ボタン_エクストラ_ヘッダー_タイトル			107
+
+// ゲームパッド動作
+#replace	@動作_エクストラ_サウンド_音量_下げる				-20
+#replace	@動作_エクストラ_サウンド_音量_上げる				-21
+
+// シーンオブジェクト関連
+#command $$create_extra_sound_player_object(stage)			// シーンオブジェクトを作成する
+#command $$set_extra_sound_player_joypad_navigation(stage)			// パッド入力の遷移を設定する
 
 
 //---------------------------------------------------------------------------
@@ -1202,6 +1249,7 @@
 //---------------------------------------------------------------------------
 // オブジェクト
 #replace	@イメージ_レコード_達成率				1
+#replace	@イメージ_レコード_達成率１００			4
 #replace	@イメージ_レコード枠					10
 
 // 子供オブジェクト
@@ -1219,11 +1267,14 @@
 #replace	@動作_レコード_スクロールダウン			-13
 
 // データ関連
+#define		@レコード達成率							$$get_record_complete_rate
+
 #replace	@レコード_取得済_テキストカラー			009		// Gameexe.ini #COLOR_TABLE.009
 #replace	@レコード_未取得_テキストカラー			010		// Gameexe.ini #COLOR_TABLE.010
 
 #command $$get_record_title : str						// レコードを獲得したときのテキストを取得する
 #command $$get_record_name(int) : str					// レコード名を取得する
+#command $$get_record_complete_rate : int				// レコード達成率を取得する
 
 // シーンオブジェクト関連
 #command $$create_record_scene_object(stage)			// シーンオブジェクトを作成する
@@ -1236,6 +1287,9 @@
 #command $$create_record_all_thumb_object(stage, str, int, int, int, int, int)		// レコードシーンで使用するすべてのサムネイルオブジェクトを作成する
 #command $$create_record_scrollview(object, str, int, int, int,						// レコードシーンで使用するスクロールビューを作成する
 									int, int, int, int, int, int, int, int, int)
+
+
+#command $$set_extra_record_sound_player_joypad_navigation(stage)
 
 
 //---------------------------------------------------------------------------

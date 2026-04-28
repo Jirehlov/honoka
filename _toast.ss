@@ -18,8 +18,8 @@
 //---------------------------------------------------------------------------
 command $$create_toast_scene_object(property $stage : stage)
 {
-	$$create_ui_image($stage.object[@オブジェクト_トースト_背景], sample__toast_bg, 1340, 13)
+	$$create_ui_image($stage.object[@オブジェクト_トースト_背景], _toast_bg, 1367, 18)
 	$stage.object[@オブジェクト_トースト_背景].child.resize(2)
-	$$create_ui_string($stage.object[@オブジェクト_トースト_タイトル], 1424, 29, 189, 22, 16)
-	$$create_ui_string($stage.object[@オブジェクト_トースト_本文], 1423, 54, 498, 20, 16)
+	$$create_ui_string($stage.object[@オブジェクト_トースト_タイトル], 1447, 50, 189, 22, 16)
+	$$create_ui_string($stage.object[@オブジェクト_トースト_本文], 1447, 75, 498, 20, 16)
 }

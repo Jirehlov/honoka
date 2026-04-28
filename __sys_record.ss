@@ -34,7 +34,7 @@
 $$excall_ready									// システムコールを準備する
 $$create_record_scene_object(excall.back)		// シーンオブジェクトを作成する
 $$update_scene_object(excall.back)				// シーンオブジェクトの描画を更新する
-if( __SYSTEM_FOOTER_ENABLE ) {
+if( __SYSTEM_FOOTER_ENABLE && <EXTRA_MODE> == 0 ) {
 	$$set_footer_joypad_navigation(excall.back)	// 手動でジョイパッド時のボタン遷移先を設定する
 }
 $$set_record_joypad_navigation(excall.back)		// 手動でジョイパッド時のボタン遷移先を設定する
@@ -68,7 +68,7 @@ while( 1 )
 	}
 	
 	// フッターの入力処理を更新する
-	if( __SYSTEM_FOOTER_ENABLE )
+	if( __SYSTEM_FOOTER_ENABLE && <EXTRA_MODE> == 0 )
 	{
 		$select_btn = $$update_footer_input(excall.front, $select_btn, @ボタン_フッター_レコード)
 		
@@ -79,6 +79,8 @@ while( 1 )
 		
 		if( $select_btn == @ボタン_フッター_セーブ || $select_btn == @ボタン_フッター_ロード || $select_btn == @ボタン_フッター_コンフィグ )
 		{
+			$$stop_frame_action
+			
 			// 全てのシステムオブジェクトのワイプコピーフラグをオフにする
 			$$off_system_front_wipe_copy_all
 			
@@ -89,6 +91,28 @@ while( 1 )
 			case(@ボタン_フッター_コンフィグ)		jump(__sys_config_mode_select, 0)	// コンフィグ画面へ
 			}
 		}
+	}
+	
+	// トラックリストボタンが押されている場合
+	if( $select_btn == @ボタン_エクストラ_サウンド_トラックリスト )
+	{
+		farcall("__sys_extra_sound")
+		
+		$$set_extra_sound_player_joypad_navigation(excall.front)
+		$$set_extra_record_sound_player_joypad_navigation(excall.front)
+		$$set_joypad_focus_button(@ボタン_エクストラ_サウンド_トラックリスト)
+		$$update_joypad_focus_button(excall.front)
+	}
+	if( $select_btn == @ボタン_エクストラ_ヘッダー_ギャラリー ) {
+		
+		// 全てのシステムオブジェクトのワイプコピーフラグをオフにする
+		$$off_system_front_wipe_copy_all
+		
+		jump(__sys_extra_cg)
+	}
+	if( $select_btn == @ボタン_エクストラ_ヘッダー_タイトル )
+	{
+		break
 	}
 	
 	// アプリケーション側の処理を更新する
@@ -109,10 +133,30 @@ while( 1 )
 
 $$off_system_front_wipe_copy_all			// 全てのシステムオブジェクトのワイプコピーフラグをオフにする
 $$hide_record_scene_object(excall.front)	// シーンオブジェクトを非表示にする
-$$excall_free								// システムコールを解放する
+if( <EXTRA_MODE> == 0 ) {
+	$$excall_free								// システムコールを解放する
+}
 
 return
 
+
+command $$stop_frame_action
+{
+	property $i
+	property $j
+	
+	for( $i = <OBJ_START>, $i < <OBJ_MAX>, $i += 1 )
+	{
+		excall.front.object[$i].frame_action.end
+		
+		for( $j = 0, $j < excall.front.object[$i].frame_action_ch.get_size, $j += 1 )
+		{
+			excall.front.object[$i].frame_action_ch[$j].end
+		}
+	}
+	
+	excall.front.object[@ボタン_レコード_スクロールビュー].frame_action.end
+}
 
 //---------------------------------------------------------------------------
 // レコードシーンで使用するすべてのサムネイルオブジェクトを作成する
@@ -167,11 +211,11 @@ command $$update_scene_object(property $stage : stage)
 		$$update_scene_thumb_object($stage.object[@イメージ_レコード枠].child[$i], $i)
 		
 		// サムネイルオブジェクトをスクロールビューのグループとして設定する
-		$$set_ui_scrollview_group($stage.object[@イメージ_レコード枠].child[$i], @ボタン_レコード_スクロールビュー)
+		$$set_ui_scrollview_group($stage.object[@イメージ_レコード枠].child[$i], $stage.object[@ボタン_レコード_スクロールビュー], @ボタン_レコード_スクロールビュー)
 	}
 	
 	// 共通フッターオブジェクトを作成する
-	if( __SYSTEM_FOOTER_ENABLE )
+	if( __SYSTEM_FOOTER_ENABLE && <EXTRA_MODE> == 0 )
 	{
 		$$create_record_footer_scene_object($stage)
 		$stage.object[@ボタン_フッター_レコード].set_button_state_select
@@ -232,7 +276,7 @@ command $$update_scene_thumb_object(property $obj : object, property $index)
 		$obj.child[@イメージ_レコード枠_番号_取得済].disp = 1
 		$obj.child[@イメージ_レコード枠_番号_未取得].disp = 0
 		$obj.child[@イメージ_レコード枠_テキスト].set_string($$get_record_name($index))
-		$obj.child[@イメージ_レコード枠_テキスト].set_string_param(21, -2, 0, 0, @レコード_取得済_テキストカラー, -1, 0, -1)
+		$obj.child[@イメージ_レコード枠_テキスト].set_string_param($obj.child[@イメージ_レコード枠_テキスト].f_font_size, -2, 0, 0, @レコード_取得済_テキストカラー, -1, 0, -1)
 	}
 	
 	// レコードを未取得の場合
@@ -242,7 +286,7 @@ command $$update_scene_thumb_object(property $obj : object, property $index)
 		$obj.child[@イメージ_レコード枠_番号_取得済].disp = 0
 		$obj.child[@イメージ_レコード枠_番号_未取得].disp = 1
 		$obj.child[@イメージ_レコード枠_テキスト].set_string($$get_record_name(-1))
-		$obj.child[@イメージ_レコード枠_テキスト].set_string_param(21, -2, 0, 0, @レコード_未取得_テキストカラー, -1, 0, -1)
+		$obj.child[@イメージ_レコード枠_テキスト].set_string_param($obj.child[@イメージ_レコード枠_テキスト].f_font_size, -2, 0, 0, @レコード_未取得_テキストカラー, -1, 0, -1)
 	}
 }
 

@@ -20,9 +20,6 @@
 //---------------------------------------------------------------------------
 #inc_start
 	
-	// 最大数
-	#replace	@掲示板_依頼書最大数					11
-	
 	// 掲示板／イメージ／ボタン
 	#replace	@イメージ_掲示板_背景					5
 	#replace	@イメージ_掲示板_フッター				6
@@ -35,10 +32,8 @@
 	#replace	@ボタン_掲示板_前の選択肢に戻る			15
 	#replace	@ボタン_掲示板_タイトルに戻る			16
 	#replace	@ボタン_掲示板_ゲームを終了する			17
-	#replace	@ボタン_掲示板_ＵＭＡレース				20
-	#replace	@ボタン_掲示板_ヘビヘビパニック			21
 	#replace	@ボタン_掲示板_依頼書					22
-	#define		@ボタン_掲示板_依頼書最大				(@ボタン_掲示板_依頼書 + @掲示板_依頼書最大数)
+	#define		@ボタン_掲示板_依頼書最大				(@ボタン_掲示板_依頼書 + @依頼書_表示最大)
 	#replace	@デバッグボタン_掲示板_何もしない		50
 	
 	#define		@ボタン_現在選択している_依頼書			$bbs_select_btn_only_request
@@ -89,6 +84,13 @@
 // 掲示板シーン開始
 //---------------------------------------------------------------------------
 #z00
+
+// 依頼が一つでもあるかチェック
+if( $$exists_bbs_request_data == 0 )
+{
+	// 依頼がない場合は終了
+	return (1)
+}
 
 // 既読／未読スキップフラグをオフにする
 $read_skip_flag = syscom.get_read_skip_onoff_flag
@@ -218,7 +220,7 @@ while(1)
 	// ＵＭＡレースボタンが選択された場合
 	#ifdef @TRIAL
 	#else
-	
+	/*
 	if( $bbs_select_btn == @ボタン_掲示板_ＵＭＡレース )
 	{
 		$$set_front_wipe_copy_all(0)
@@ -257,6 +259,7 @@ while(1)
 		
 		goto #end
 	}
+	*/
 	
 	// デバッグ（何もしないで終了）ボタンが選択された場合
 	if( $bbs_select_btn == @デバッグボタン_掲示板_何もしない )
@@ -471,19 +474,19 @@ command $$init_bbs_data
 	// サイズが確保されていない場合はサイズを確保する
 	if( $request_select_file.get_size == 0 )
 	{
-		$request_thumb.resize(@掲示板_依頼書最大数)
-		$request_info_image.resize(@掲示板_依頼書最大数)
-		$request_character.resize(@掲示板_依頼書最大数)
-		$request_time.resize(@掲示板_依頼書最大数)
-		$request_select_file.resize(@掲示板_依頼書最大数)
-		$request_select_label.resize(@掲示板_依頼書最大数)
-		$request_select_readed.resize(@掲示板_依頼書最大数)
-		$request_receive_file.resize(@掲示板_依頼書最大数)
-		$request_receive_label.resize(@掲示板_依頼書最大数)
+		$request_thumb.resize(@依頼書_表示最大)
+		$request_info_image.resize(@依頼書_表示最大)
+		$request_character.resize(@依頼書_表示最大)
+		$request_time.resize(@依頼書_表示最大)
+		$request_select_file.resize(@依頼書_表示最大)
+		$request_select_label.resize(@依頼書_表示最大)
+		$request_select_readed.resize(@依頼書_表示最大)
+		$request_receive_file.resize(@依頼書_表示最大)
+		$request_receive_label.resize(@依頼書_表示最大)
 	}
 	
 	// 各データを初期化する
-	for( $i = 0, $i < @掲示板_依頼書最大数, $i += 1 )
+	for( $i = 0, $i < @依頼書_表示最大, $i += 1 )
 	{
 		$request_thumb[$i]         = ""
 		$request_info_image[$i]    = ""
@@ -498,21 +501,36 @@ command $$init_bbs_data
 }
 
 //---------------------------------------------------------------------------
+// 掲示板の依頼書データが存在しているかチェックする
+//---------------------------------------------------------------------------
+command $$exists_bbs_request_data
+{
+	property $i
+	
+	for( $i = 0, $i < @依頼書_表示最大, $i += 1 )
+	{
+		if( $request_thumb[$i] != "" ) {
+			return (1)
+		}
+	}
+	
+	return (0)
+}
+
+//---------------------------------------------------------------------------
 // 掲示板の依頼書データを設定する
 //---------------------------------------------------------------------------
 command $$set_bbs_request_data(property $thumb_file : str, property $info_image : str, property $cell_no, property $character, property $time, property $receive_file : str, property $receive_label, property $select_file : str, property $select_label)
 {
 	// データエラーチェック
-	if( $cell_no < 1 || @掲示板_依頼書最大数 < $cell_no )
+	if( $cell_no < 0 || @依頼書_表示最大 <= $cell_no )
 	{
-		$$debug_message("依頼書のセル番号が正しい数値ではありません。\nセル番号は０から" + math.tostr(@掲示板_依頼書最大数) + "の範囲で設定してください。\nセル番号 → " + math.tostr($cell_no) + "\n依頼書作成処理をスキップします。")
+		$$debug_message("依頼書のセル番号が正しい数値ではありません。\nセル番号は０から" + math.tostr(@依頼書_表示最大 - 1) + "の範囲で設定してください。\nセル番号 → " + math.tostr($cell_no) + "\n依頼書作成処理をスキップします。")
 		return
 	}
 	if( @日付_時間帯 == @午後 && $time == @依頼時間_一日 ) {
 		$$debug_message("「午後の掲示板」に「一日イベント」が設定されています。\n日付 → " + math.tostr(@日付_月) + "/" + math.tostr(@日付_日) + "\nファイル → " + $receive_file + ".ss\n午後行動で一日イベントが設定されていて問題ないか確認してください。")
 	}
-	
-	$cell_no -= 1
 	
 	// 依頼書データ(選択時の遷移先など)を設定する
 	$request_thumb[$cell_no]         = $thumb_file
@@ -553,22 +571,16 @@ command $$create_bbs_scene_object(property $stage : stage)
 	$$create_ui_button($stage.object[@ボタン_掲示板_ゲームを終了する], _bbs_sys_quit_btn, 1302, 972, @ボタン_掲示板_ゲームを終了する, <OBJBTN_GROUP_NO_SELECT>, 1)
 	$$create_ui_button($stage.object[@ボタン_掲示板_前の選択肢に戻る], _bbs_sys_back_btn, 1549, 972, @ボタン_掲示板_前の選択肢に戻る, <OBJBTN_GROUP_NO_SELECT>, 1)
 	
-	// 体験版処理（レコードボタンは押せない）
-	$stage.object[@ボタン_掲示板_レコード].set_button_state_disable
-	
 	// 前の選択肢に戻るが不可能な場合はボタンを押せないようにする
 	if( syscom.check_return_to_sel_enable == 0 ) {
 		$stage.object[@ボタン_掲示板_前の選択肢に戻る].set_button_state_disable
 	}
 	
-	// 各依頼書ボタン
-	$$create_bbs_request_button($stage)
-	
 	#ifdef @TRIAL
 	#else
 	
 	// ミニゲームボタン
-	$$create_bbs_mng_button($stage)
+	$$set_bbs_mng_button($stage)
 	
 	// デバッグボタン（何もしないで掲示板終了）
 	if( $$check_debug_mode_enable ) {
@@ -576,6 +588,9 @@ command $$create_bbs_scene_object(property $stage : stage)
 	}
 	
 	#endif
+	
+	// 各依頼書ボタン
+	$$create_bbs_request_button($stage)
 	
 	// 表示更新
 	disp
@@ -597,13 +612,13 @@ command $$create_bbs_request_button(property $stage : stage)
 	
 	$base_x = 181				// 依頼書ベースx座標(左上の依頼書の座標)
 	$base_y = 252				// 依頼書ベースy座標
-	$offset_x = 263				// 依頼書オフセットx座標(依頼書ごとの間隔)
-	$offset_y = 249				// 依頼書オフセットy座標
-	$random_offset_x = 4		// 依頼書ランダムx座標(依頼書一枚ごとのランダムなずれ)
-	$random_offset_y = 15		// 依頼書ランダムy座標
+	$offset_x = 323				// 依頼書オフセットx座標(依頼書ごとの間隔)
+	$offset_y = 319				// 依頼書オフセットy座標
+	$random_offset_x = 18		// 依頼書ランダムx座標(依頼書一枚ごとのランダムなずれ)
+	$random_offset_y = 25		// 依頼書ランダムy座標
 	
 	// 各キャラクターの依頼をチェックする
-	for( $i = 0, $i < @掲示板_依頼書最大数, $i += 1 )
+	for( $i = 0, $i < @依頼書_表示最大, $i += 1 )
 	{
 		// 依頼がない場合は処理をスキップする
 		if( $request_thumb[$i] == ""  ) {
@@ -612,8 +627,8 @@ command $$create_bbs_request_button(property $stage : stage)
 		
 		// 依頼があるので各表示データを設定する
 		$btn_no = @ボタン_掲示板_依頼書 + $i
-		$x = $base_x + ($i % 6) * $offset_x + math.rand(-$random_offset_x, $random_offset_x)
-		$y = $base_y + ($i / 6) * $offset_y + math.rand(-$random_offset_y, $random_offset_y)
+		$x = $base_x + ($i % 5) * $offset_x + math.rand(-$random_offset_x, $random_offset_x)
+		$y = $base_y + ($i / 5) * $offset_y + math.rand(-$random_offset_y, $random_offset_y)
 		
 		// 依頼書ボタンを作成する
 		$$create_ui_button($stage.object[$btn_no], _bbs_request_btn, $x, $y, $btn_no, <OBJBTN_GROUP_NO_SELECT>, 1)
@@ -622,17 +637,18 @@ command $$create_bbs_request_button(property $stage : stage)
 		// 依頼書
 		$stage.object[$btn_no].child[0].create($request_info_image[$i], 1)
 		$stage.object[$btn_no].child[0].center_x = $stage.object[$btn_no].child[0].get_size_x / 2
-		$stage.object[$btn_no].child[0].set_scale(300, 300)
+		$stage.object[$btn_no].child[0].set_scale(350, 350)
 		$stage.object[$btn_no].child[0].x = $stage.object[$btn_no].child[0].get_size_x * 300 / 1000 / 2
 	}
 }
 
-// ミニゲームボタンを作成する
-command $$create_bbs_mng_button(property $stage : stage)
+// ミニゲームボタンを設定する
+command $$set_bbs_mng_button(property $stage : stage)
 {
 	#ifdef @TRIAL
 	#else
 	
+	/*
 	// ＵＭＡレースボタン(※参加可能日は必ず表示される)
 	if( @日付_日 == <URACE_ENTRY_DATE> && @日付_時間帯 == @午前 )
 	{
@@ -664,14 +680,31 @@ command $$create_bbs_mng_button(property $stage : stage)
 			}
 		}
 	}
+	*/
 	
-	// ヘビヘビパニックボタン
-	if( 1 )
+	// ＵＭＡレース todo ミニゲーム依頼書表示される条件
+	if( $$urace_enable )
 	{
-		$$create_ui_button($stage.object[@ボタン_掲示板_ヘビヘビパニック], _bbs_hhp_btn, 492, 742, @ボタン_掲示板_ヘビヘビパニック, <OBJBTN_GROUP_NO_SELECT>, 1)
+		$$set_bbs_request_data("_bbs_request1302", "_bbs_request1302", @依頼書_表示位置６, @依頼者_ＵＭＡ, @依頼時間_半日, "___mng_urace", 00, "100_UMA0000", 00)
+	}
+	
+	// ヘビヘビパニックボタン todo ミニゲーム依頼書表示される条件
+	if( $$hhp_enable )
+	{
+		$$set_bbs_request_data("_bbs_request1301", "_bbs_request1301", @依頼書_表示位置１０, @依頼者_ヘビヘビ, @依頼時間_半日, "___mng_hhp", 00, "101_ヘビヘビパニック0001", 00)
 	}
 	
 	#endif
+}
+
+command $$urace_enable
+{
+	return (0)
+}
+
+command $$hhp_enable
+{
+	return (0)
 }
 
 command $$set_request_anim(property $obj : object)
@@ -860,14 +893,6 @@ command $$show_bbs_scene_object(property $stage : stage)
 		}
 	}
 	
-	if( $stage.object[@ボタン_掲示板_ＵＭＡレース].disp ) {
-		$$set_request_anim($stage.object[@ボタン_掲示板_ＵＭＡレース])
-	}
-	
-	if( $stage.object[@ボタン_掲示板_ヘビヘビパニック].disp ) {
-		$$set_request_anim($stage.object[@ボタン_掲示板_ヘビヘビパニック])
-	}
-	
 	$start_time = 500 + $anim_request_count * 80
 	
 	$stage.object[@イメージ_掲示板_フッター].y_rep.resize(1)
@@ -917,7 +942,7 @@ command $$set_bbs_joypad_navigation(property $stage : stage)
 	property $btn_no
 	property $tmp
 	
-	for( $i = 0, $i < @掲示板_依頼書最大数, $i += 1 )
+	for( $i = 0, $i < @依頼書_表示最大, $i += 1 )
 	{
 		// ボタンがない場合は処理をスキップする
 		if( $stage.object[@ボタン_掲示板_依頼書 + $i].f.get_size == 0 ) {
@@ -927,7 +952,7 @@ command $$set_bbs_joypad_navigation(property $stage : stage)
 		$btn_no = @ボタン_掲示板_依頼書 + $i
 		
 		// 上段
-		if( $i / 6 == 0 )
+		if( $i / 5 == 0 )
 		{
 			$stage.object[$btn_no].joypad_up    = -1
 			
@@ -950,7 +975,7 @@ command $$set_bbs_joypad_navigation(property $stage : stage)
 				$stage.object[$btn_no].joypad_left  = -1
 			}
 			
-			for( $j = $i + 1, $j < 6, $j += 1 )
+			for( $j = $i + 1, $j < 5, $j += 1 )
 			{
 				if( $stage.object[@ボタン_掲示板_依頼書 + $j].f.get_size != 0 )
 				{
@@ -958,7 +983,7 @@ command $$set_bbs_joypad_navigation(property $stage : stage)
 					break
 				}
 			}
-			if( $j == 6 ) {
+			if( $j == 5 ) {
 				$stage.object[$btn_no].joypad_right  = -1
 			}
 		}
@@ -975,7 +1000,7 @@ command $$set_bbs_joypad_navigation(property $stage : stage)
 			
 			$stage.object[$btn_no].joypad_down  = @ボタン_掲示板_セーブ
 			
-			for( $j = $i - 1, $j >= 6, $j -= 1 )
+			for( $j = $i - 1, $j >= 5, $j -= 1 )
 			{
 				if( $stage.object[@ボタン_掲示板_依頼書 + $j].f.get_size != 0 )
 				{
@@ -983,11 +1008,11 @@ command $$set_bbs_joypad_navigation(property $stage : stage)
 					break
 				}
 			}
-			if( $j == 5 ) {
+			if( $j == 4 ) {
 				$stage.object[$btn_no].joypad_left  = -1
 			}
 			
-			for( $j = $i + 1, $j < 12, $j += 1 )
+			for( $j = $i + 1, $j < 10, $j += 1 )
 			{
 				if( $stage.object[@ボタン_掲示板_依頼書 + $j].f.get_size != 0 )
 				{
@@ -995,7 +1020,7 @@ command $$set_bbs_joypad_navigation(property $stage : stage)
 					break
 				}
 			}
-			if( $j == 12 ) {
+			if( $j == 10 ) {
 				$stage.object[$btn_no].joypad_right  = -1
 			}
 		}
@@ -1046,7 +1071,7 @@ command $$set_bbs_joypad_navigation(property $stage : stage)
 command $$get_bbs_request_joypad_navigation(property $stage : stage, property $base_btn_no, property $line)
 {
 	property $i
-	property $btn_list : intlist[6]
+	property $btn_list : intlist[5]
 	property $list_add_pat
 	property $list_offset
 	property $btn_offset
@@ -1056,28 +1081,28 @@ command $$get_bbs_request_joypad_navigation(property $stage : stage, property $b
 	// 指定した段によって検索範囲を変更する
 	if( $line == 0 )
 	{
-		$list_offset = -6
+		$list_offset = -5
 		$btn_offset = 0
 	}
 	else
 	{
-		$list_offset = 6
-		$btn_offset = 6
+		$list_offset = 5
+		$btn_offset = 5
 	}
 	
 	// 検索するボタンリストを作成する
 	//
-	// 0|1|2|3|4|5
-	// -+-+-+-+-+-+-
-	// 6|7|8|9|10|11
+	// 0|1|2|3|4|
+	// -+-+-+-+-+
+	// 5|6|7|8|9|
 	// 
 	// 上記の並びで'3'を指定した場合
-	// パッドで'3'の下遷移の候補は[9, 8, 10, 7, 11, 6]の順で探される
+	// パッドで'3'の下遷移の候補は[8, 7, 9, 6, 5]の順で探される
 	
 	$left_offset = -1
 	$right_offset = 1
 	
-	for( $i = 0, $i < 6, $i += 1 )
+	for( $i = 0, $i < 5, $i += 1 )
 	{
 		switch( $list_add_pat ) {
 		case(0)
@@ -1103,7 +1128,7 @@ command $$get_bbs_request_joypad_navigation(property $stage : stage, property $b
 			
 		case(2)
 			
-			if( $base_btn_no + $list_offset + $right_offset < $btn_offset + 6 )
+			if( $base_btn_no + $list_offset + $right_offset < $btn_offset + 5 )
 			{
 				$btn_list[$i] = $base_btn_no + $list_offset + $right_offset
 				
@@ -1119,7 +1144,7 @@ command $$get_bbs_request_joypad_navigation(property $stage : stage, property $b
 	}
 	
 	// 検索するボタンリストからボタンが存在しているかチェックする
-	for( $i = 0, $i < 6, $i += 1 )
+	for( $i = 0, $i < 5, $i += 1 )
 	{
 		if( $stage.object[@ボタン_掲示板_依頼書 + $btn_list[$i]].f.get_size == 0 ) {
 			continue
@@ -1156,10 +1181,10 @@ command $$create_request_scene_object(property $stage : stage)
 	$$create_ui_image($stage.object[@イメージ_依頼書_フィルター], _bbs_request_bg, 0, 0)
 	
 	// 依頼書詳細
-	$$create_ui_image($stage.object[@イメージ_依頼書_詳細], $request_info_image[$select_request_no], 567, 68)
+	$$create_ui_image($stage.object[@イメージ_依頼書_詳細], $request_info_image[$select_request_no], 567, 48)
 	
 	// ダイアログ背景
-	$$create_ui_image($stage.object[@イメージ_依頼書_ダイアログ背景], _bbs_request_dialog_bg, 748, 845)
+	$$create_ui_image($stage.object[@イメージ_依頼書_ダイアログ背景], _bbs_request_dialog_bg, 748, 855)
 	
 	// はい／いいえボタン
 	$$create_ui_button($stage.object[@ボタン_依頼書_受ける], _bbs_request_yes_btn, 679, 932, @ボタン_依頼書_受ける, <OBJBTN_GROUP_NO_MODAL>, 1)

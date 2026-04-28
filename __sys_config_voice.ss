@@ -339,6 +339,14 @@ command $$set_config_charakoe_sample_voice(property $regist_no, property $voice_
 }
 
 //---------------------------------------------------------------------------
+// コンフィグのキャラクター音量設定で使用するサンプルボイスを設定する（上書き）
+//---------------------------------------------------------------------------
+command $$overwrite_config_charakoe_sample_voice(property $regist_no, property $index, property $voice_no)
+{
+	$voice_list[($regist_no - 1) * <SAMPLE_VOICE_MAX> + $index] = $voice_no
+}
+
+//---------------------------------------------------------------------------
 // コンフィグのキャラクター音量設定で使用するサンプルボイスを取得する
 //---------------------------------------------------------------------------
 command $$get_config_charakoe_sample_voice(property $index) : int

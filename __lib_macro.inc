@@ -412,6 +412,17 @@
 	@delay(@delay_time)
 	@bf(@bs_name1, @bs_name2, @bs_name3, @bs_name4, @bs_name5)
 
+// 立ち絵のトーンカーブの強制無効設定
+#macro	@bs_tonecurve_disable
+	$$set_bs_force_tonecurve_disable(1)
+
+// 立ち絵のトーンカーブの強制無効設定を解除する
+#macro	@bs_tonecurve_enable
+	$$set_bs_force_tonecurve_disable(0)
+
+// 立ち絵のx座標を反転する
+#macro	@bs_x_rev(@bs_name, @flag)
+	$$set_bs_reverse_x($$get_bs_index(@bs_name), @flag)
 
 //---------------------------------------------------------------------------
 // 顔グラ
@@ -1282,7 +1293,9 @@
 
 // ＢＧＭ一時停止
 #macro	@bgm_pause(@time(1000))
-	bgm.pause(@time)
+	if( bgm.check == 1 ) {
+		bgm.pause(@time)
+	}
 
 // ＢＧＭ再開
 #macro	@bgm_resume(@time(1000))
@@ -1426,6 +1439,10 @@
 		$$record_flag_on(@record_no)
 	}
 
+#macro	@レコード表示_終了待ち(@wait_time(5000))
+	if( $$get_toast_size ) {
+		timewait_key(@wait_time)
+	}
 
 //---------------------------------------------------------------------------
 // デバッグ

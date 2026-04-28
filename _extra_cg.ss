@@ -16,18 +16,25 @@
 //---------------------------------------------------------------------------
 command $$create_extra_cg_scene_object(property $stage : stage)
 {
-	$$create_ui_image($stage.object[0], sample__extra_cg_bg, 0, 0)
-	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_閉じる], sample__extra_cg_close_btn, 1711, 894, @ボタン_エクストラ_ＣＧ_閉じる, <OBJBTN_GROUP_NO_EXCALL>, 2)
-	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 0], sample__extra_cg_page_btn01, 824, 944, @ボタン_エクストラ_ＣＧ_ページ + 0, <OBJBTN_GROUP_NO_EXCALL>, 4)
-	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 1], sample__extra_cg_page_btn02, 893, 944, @ボタン_エクストラ_ＣＧ_ページ + 1, <OBJBTN_GROUP_NO_EXCALL>, 4)
-	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 2], sample__extra_cg_page_btn03, 964, 944, @ボタン_エクストラ_ＣＧ_ページ + 2, <OBJBTN_GROUP_NO_EXCALL>, 4)
-	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 3], sample__extra_cg_page_btn04, 1034, 944, @ボタン_エクストラ_ＣＧ_ページ + 3, <OBJBTN_GROUP_NO_EXCALL>, 4)
-	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 0], sample__extra_cg_thumb + math.tostr_zero(1, 2), 138 + 556 * (0 % 3), 193 + 347 * (0 / 3), @ボタン_エクストラ_ＣＧ_サムネイル + 0, <OBJBTN_GROUP_NO_EXCALL>, 1)
-	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 1], sample__extra_cg_thumb + math.tostr_zero(2, 2), 138 + 556 * (1 % 3), 193 + 347 * (1 / 3), @ボタン_エクストラ_ＣＧ_サムネイル + 1, <OBJBTN_GROUP_NO_EXCALL>, 1)
-	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 2], sample__extra_cg_thumb + math.tostr_zero(3, 2), 138 + 556 * (2 % 3), 193 + 347 * (2 / 3), @ボタン_エクストラ_ＣＧ_サムネイル + 2, <OBJBTN_GROUP_NO_EXCALL>, 1)
-	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 3], sample__extra_cg_thumb + math.tostr_zero(4, 2), 138 + 556 * (3 % 3), 193 + 347 * (3 / 3), @ボタン_エクストラ_ＣＧ_サムネイル + 3, <OBJBTN_GROUP_NO_EXCALL>, 1)
-	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 4], sample__extra_cg_thumb + math.tostr_zero(5, 2), 138 + 556 * (4 % 3), 193 + 347 * (4 / 3), @ボタン_エクストラ_ＣＧ_サムネイル + 4, <OBJBTN_GROUP_NO_EXCALL>, 1)
-	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 5], sample__extra_cg_thumb + math.tostr_zero(6, 2), 138 + 556 * (5 % 3), 193 + 347 * (5 / 3), @ボタン_エクストラ_ＣＧ_サムネイル + 5, <OBJBTN_GROUP_NO_EXCALL>, 1)
+	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 0], _extra_cg_page_btn01, 0, 259, @ボタン_エクストラ_ＣＧ_ページ + 0, <OBJBTN_GROUP_NO_EXCALL>, 4)
+	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 1], _extra_cg_page_btn02, 0, 314, @ボタン_エクストラ_ＣＧ_ページ + 1, <OBJBTN_GROUP_NO_EXCALL>, 4)
+	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 2], _extra_cg_page_btn03, 0, 369, @ボタン_エクストラ_ＣＧ_ページ + 2, <OBJBTN_GROUP_NO_EXCALL>, 4)
+	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 3], _extra_cg_page_btn04, 0, 424, @ボタン_エクストラ_ＣＧ_ページ + 3, <OBJBTN_GROUP_NO_EXCALL>, 4)
+	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 4], _extra_cg_page_btn05, 0, 479, @ボタン_エクストラ_ＣＧ_ページ + 4, <OBJBTN_GROUP_NO_EXCALL>, 4)
+	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 5], _extra_cg_page_btn06, 0, 534, @ボタン_エクストラ_ＣＧ_ページ + 5, <OBJBTN_GROUP_NO_EXCALL>, 4)
+	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 6], _extra_cg_page_btn07, 0, 589, @ボタン_エクストラ_ＣＧ_ページ + 6, <OBJBTN_GROUP_NO_EXCALL>, 4)
+	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 7], _extra_cg_page_btn08, 0, 644, @ボタン_エクストラ_ＣＧ_ページ + 7, <OBJBTN_GROUP_NO_EXCALL>, 4)
+	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 8], _extra_cg_page_btn09, 0, 699, @ボタン_エクストラ_ＣＧ_ページ + 8, <OBJBTN_GROUP_NO_EXCALL>, 4)
+	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 9], _extra_cg_page_btn10, 0, 754, @ボタン_エクストラ_ＣＧ_ページ + 9, <OBJBTN_GROUP_NO_EXCALL>, 4)
+	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 10], _extra_cg_page_btn11, 0, 809, @ボタン_エクストラ_ＣＧ_ページ + 10, <OBJBTN_GROUP_NO_EXCALL>, 4)
+	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 11], _extra_cg_page_btn12, 0, 864, @ボタン_エクストラ_ＣＧ_ページ + 11, <OBJBTN_GROUP_NO_EXCALL>, 4)
+	$$create_ui_button($stage.object[@ボタン_エクストラ_ＣＧ_ページ + 12], _extra_cg_page_btn13, 0, 919, @ボタン_エクストラ_ＣＧ_ページ + 12, <OBJBTN_GROUP_NO_EXCALL>, 4)
+	$$create_ui_image($stage.object[0], _extra_cg_bg01, 0, 0)
+	$$create_ui_image($stage.object[1], _extra_cg_ch, 1320, 0)
+	$$create_ui_image($stage.object[2], _extra_cg_ch_name, 431, 136)
+	$$create_overlay_thumb_button($stage, _extra_cg_thumb_btn, 421, 267, 270, 161, 4, 4)
+	$$create_ui_image($stage.object[@イメージ_エクストラ_達成率_背景], _extra_cg_complete_bg, 1302, 0)
+	$$create_extra_cg_complete_number($stage.object[@イメージ_エクストラ_達成率_数値], _extra_cg_complete_number, 1349, 92)
 }
 
 //---------------------------------------------------------------------------
@@ -36,6 +43,18 @@ command $$create_extra_cg_scene_object(property $stage : stage)
 //---------------------------------------------------------------------------
 command $$update_extra_cg_scene_object(property $stage : stage, property $select_btn)
 {
+	// 音楽プレイヤーの更新
+	$select_btn = $$update_extra_music_player($select_btn)
+	
+	// 音楽プレイヤーのボタンが押された場合
+	if( $select_btn != -2 )
+	{
+		// 音楽プレイヤーオブジェクトの更新
+		$$update_extra_music_player_object($stage)
+		
+		// 入力制御を再開始する
+		$$input_start(excall.front, <OBJBTN_GROUP_NO_EXCALL>)
+	}
 }
 
 //---------------------------------------------------------------------------
@@ -44,20 +63,44 @@ command $$update_extra_cg_scene_object(property $stage : stage, property $select
 //---------------------------------------------------------------------------
 command $$redraw_extra_cg_scene_object(property $stage : stage, property $redraw_type)
 {
-	// ページ切り替えによる描画更新が行われた場合
-	if( $redraw_type == @エクストラ_ＣＧ_描画更新_ページ切り替え )
+	// タブ切り替えによる描画更新が行われた場合
+	if( $redraw_type == @エクストラ_ＣＧ_描画更新_タブ切り替え )
 	{
-		// ページボタンに遷移するボタンを現在のページに遷移するように更新する
-		$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 0].joypad_up   = @ボタン_エクストラ_ＣＧ_現在のページ
-		$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 1].joypad_up   = @ボタン_エクストラ_ＣＧ_現在のページ
-		$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 2].joypad_up   = @ボタン_エクストラ_ＣＧ_現在のページ
-		$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 3].joypad_down = @ボタン_エクストラ_ＣＧ_現在のページ
-		$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 4].joypad_down = @ボタン_エクストラ_ＣＧ_現在のページ
-		$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 5].joypad_down = @ボタン_エクストラ_ＣＧ_現在のページ
-		
-		// ワイプ(ジョイパッドのＲ１がキースキップするのでキースキップできないようにする)
-		wipe(0, 150, wait=1, key_skip=0)
+		// パッド入力の遷移を再設定する
+		$$set_extra_cg_joypad_navigation($stage)
+		$$set_extra_cg_sound_player_joypad_navigation($stage)
 	}
+	elseif( $redraw_type == @エクストラ_ＣＧ_描画更新_ページ切り替え )
+	{
+		// 背景／キャラ／キャラ名を現在のページに合わせる
+		$stage.object[0].change_file(_extra_cg_bg + math.tostr_zero(@エクストラ_ＣＧ_現在のページ + 1, 2))
+		$stage.object[1].patno = @エクストラ_ＣＧ_現在のページ
+		$stage.object[2].patno = @エクストラ_ＣＧ_現在のページ
+		
+		// キャラの移動
+		$stage.object[1].x_rep[0] = 100
+		$stage.object[1].x_rep_eve[0].set(0, 500, 0, 2)
+		$stage.object[1].tr_rep[0] = 0
+		$stage.object[1].tr_rep_eve[0].set(255, 500, 0, 2)
+		
+		// 名前の移動
+		$stage.object[2].x_rep[0] = 100
+		$stage.object[2].x_rep_eve[0].set(0, 500, 0, 2)
+		$stage.object[2].tr_rep[0] = 0
+		$stage.object[2].tr_rep_eve[0].set(255, 500, 0, 2)
+		
+		// サムネイルボタンにフォーカスがある場合はフォーカスを最初のサムネイルに設定する
+		if( @ボタン_エクストラ_ＣＧ_サムネイル <= $$get_joypad_focus_button ) {
+			$$set_joypad_focus_button(@ボタン_エクストラ_ＣＧ_サムネイル + 0)
+		}
+		
+		// パッド入力の遷移を再設定する
+		$$set_extra_cg_joypad_navigation($stage)
+		$$set_extra_cg_sound_player_joypad_navigation($stage)
+	}
+	
+	// ワイプ(ジョイパッドのＲ１がキースキップするのでキースキップできないようにする)
+	wipe(0, 150, wait=1, key_skip=0)
 }
 
 //---------------------------------------------------------------------------
@@ -66,6 +109,54 @@ command $$redraw_extra_cg_scene_object(property $stage : stage, property $redraw
 //---------------------------------------------------------------------------
 command $$show_extra_cg_scene_object(property $stage : stage)
 {
+	
+	// 音楽プレイヤーの作成
+	$$init_extra_music_player
+	$$create_extra_sound_player_object($stage)
+	$$update_extra_music_player_object($stage)
+	$$set_extra_sound_player_joypad_navigation($stage)
+	$$set_extra_cg_sound_player_joypad_navigation($stage)
+	
+	// ヘッダー
+	$stage.object[@ボタン_エクストラ_ヘッダー_ギャラリー].set_button_state_select
+	$stage.object[@ボタン_エクストラ_ヘッダー_レコード].set_button_state_normal
+	
+	// 背景／キャラ／キャラ名を現在のページに合わせる
+	$stage.object[0].change_file(_extra_cg_bg + math.tostr_zero(@エクストラ_ＣＧ_現在のページ + 1, 2))
+	$stage.object[1].patno = @エクストラ_ＣＧ_現在のページ
+	$stage.object[2].patno = @エクストラ_ＣＧ_現在のページ
+	
+	// 達成率の数字／座標を設定する
+	if( @エクストラ_ＣＧ達成率 >= 100 )
+	{
+		// １００％は専用の画像
+		$$create_ui_image($stage.object[@イメージ_エクストラ_達成率_数値１００], _record_number100, 1349, 97)
+		$stage.object[@イメージ_エクストラ_達成率_数値].disp = 0
+	}
+	elseif( @エクストラ_ＣＧ達成率 < 10 )
+	{
+		$stage.object[@イメージ_エクストラ_達成率_数値].x = 1293
+		$stage.object[@イメージ_エクストラ_達成率_数値].set_number_param(3, 0, 0, 0, 0, 4)
+	}
+	else
+	{
+		$stage.object[@イメージ_エクストラ_達成率_数値].x = 1317
+		$stage.object[@イメージ_エクストラ_達成率_数値].set_number_param(3, 0, 0, 0, 0, 4)
+	}
+	
+	// アネモイルートをクリアしていない場合はグランドページを表示しない
+	if( @アネモイルートクリア == 0 ) {
+		// ページ最大数を上書き
+		$$set_extra_cg_page_max($$get_system_disp_object_max($stage, @ボタン_エクストラ_ＣＧ_ページ, @ボタン_エクストラ_ＣＧ_ページ最大) - @ボタン_エクストラ_ＣＧ_ページ - 1)
+		$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 12].disp = 0
+	}
+	
+	// キャラ／名前移動用にイベント確保
+	$stage.object[1].x_rep.resize(1)
+	$stage.object[1].tr_rep.resize(1)
+	$stage.object[2].x_rep.resize(1)
+	$stage.object[2].tr_rep.resize(1)
+	
 	// ジョイパッドで最初に選択されているボタンを設定する
 	$$set_joypad_focus_button(@ボタン_エクストラ_ＣＧ_サムネイル)
 	
@@ -107,8 +198,6 @@ command $$hide_extra_cg_scene_object(property $stage : stage)
 //---------------------------------------------------------------------------
 command $$show_extra_cg_diff(property $stage : stage)
 {
-	property $move_y
-	
 	// ワイプ(ジョイパッドのＲ１がキースキップするのでキースキップできないようにする)
 	wipe(0, 250, wait=1, key_skip=0)
 }
@@ -119,8 +208,6 @@ command $$show_extra_cg_diff(property $stage : stage)
 //---------------------------------------------------------------------------
 command $$change_extra_cg_diff(property $stage : stage)
 {
-	property $move_y
-	
 	// ワイプ(ジョイパッドのＲ１がキースキップするのでキースキップできないようにする)
 	wipe(0, 250, wait=1, key_skip=0)
 }
@@ -140,60 +227,106 @@ command $$hide_extra_cg_diff(property $stage : stage)
 //---------------------------------------------------------------------------
 command $$set_extra_cg_joypad_navigation(property $stage : stage)
 {
-	// サンプル(プリマドール)
+	property $i
+	property $len
 	
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 0].joypad_up    = @ボタン_エクストラ_ＣＧ_現在のページ
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 0].joypad_down  = @ボタン_エクストラ_ＣＧ_サムネイル + 3
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 0].joypad_left  = @ボタン_エクストラ_ＣＧ_サムネイル + 2
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 0].joypad_right = @ボタン_エクストラ_ＣＧ_サムネイル + 1
+	$len = 13
+	if( @アネモイルートクリア == 0 ) {
+		$len = 12
+	}
 	
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 1].joypad_up    = @ボタン_エクストラ_ＣＧ_現在のページ
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 1].joypad_down  = @ボタン_エクストラ_ＣＧ_サムネイル + 4
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 1].joypad_left  = @ボタン_エクストラ_ＣＧ_サムネイル + 0
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 1].joypad_right = @ボタン_エクストラ_ＣＧ_サムネイル + 2
+	for( $i = 0, $i < $len, $i += 1 )
+	{
+		$stage.object[@ボタン_エクストラ_ＣＧ_ページ + $i].joypad_up    = @ボタン_エクストラ_ＣＧ_ページ + $i - 1
+		$stage.object[@ボタン_エクストラ_ＣＧ_ページ + $i].joypad_down  = @ボタン_エクストラ_ＣＧ_ページ + $i + 1
+		$stage.object[@ボタン_エクストラ_ＣＧ_ページ + $i].joypad_left  = @ボタン_エクストラ_ＣＧ_サムネイル + 0
+		$stage.object[@ボタン_エクストラ_ＣＧ_ページ + $i].joypad_right = @ボタン_エクストラ_ＣＧ_サムネイル + 0
+		
+		if( $i == 0 ) {
+			$stage.object[@ボタン_エクストラ_ＣＧ_ページ + $i].joypad_up    = @ボタン_エクストラ_ＣＧ_ページ + $len - 1
+		}
+		
+		if( $i == $len - 1 ) {
+			$stage.object[@ボタン_エクストラ_ＣＧ_ページ + $i].joypad_down    = @ボタン_エクストラ_ＣＧ_ページ + 0
+		}
+	}
 	
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 2].joypad_up    = @ボタン_エクストラ_ＣＧ_現在のページ
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 2].joypad_down  = @ボタン_エクストラ_ＣＧ_サムネイル + 5
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 2].joypad_left  = @ボタン_エクストラ_ＣＧ_サムネイル + 1
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 2].joypad_right = @ボタン_エクストラ_ＣＧ_サムネイル + 0
+	$len = $$get_extra_cg_page_thumb_max
+	for( $i = 0, $i < $len, $i += 1 )
+	{
+		$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].joypad_up    = @ボタン_エクストラ_ＣＧ_サムネイル + $i - 4
+		$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].joypad_down  = @ボタン_エクストラ_ＣＧ_サムネイル + $i + 4
+		$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].joypad_left  = @ボタン_エクストラ_ＣＧ_サムネイル + $i - 1
+		$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].joypad_right = @ボタン_エクストラ_ＣＧ_サムネイル + $i + 1
+		
+		// 最上段
+		if( $i < 4 )
+		{
+			$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].joypad_up = -1
+		}
+		
+		// 最下段
+		if( $len - 5 < $i && 0 <= $i )
+		{
+			$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].joypad_down = @ボタン_エクストラ_サウンド_再生
+		}
+		
+		// 最左列
+		if( $i % 4 == 0 )
+		{
+			$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].joypad_left = @ボタン_エクストラ_ＣＧ_ページ + @エクストラ_ＣＧ_現在のページ
+		}
+		
+		// 最右列
+		if( $i % 4 == 3 )
+		{
+			$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].joypad_right = @ボタン_エクストラ_ＣＧ_ページ + @エクストラ_ＣＧ_現在のページ
+		}
+		
+		// 最後
+		if( $i == $len - 1 )
+		{
+			$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].joypad_right = @ボタン_エクストラ_ＣＧ_ページ + @エクストラ_ＣＧ_現在のページ
+		}
+	}
+}
+
+//---------------------------------------------------------------------------
+// パッド入力の遷移を設定する
+//---------------------------------------------------------------------------
+command $$set_extra_cg_sound_player_joypad_navigation(property $stage : stage)
+{
+	property $i
+	property $len
 	
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 3].joypad_up    = @ボタン_エクストラ_ＣＧ_サムネイル + 0
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 3].joypad_down  = @ボタン_エクストラ_ＣＧ_現在のページ
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 3].joypad_left  = @ボタン_エクストラ_ＣＧ_サムネイル + 5
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 3].joypad_right = @ボタン_エクストラ_ＣＧ_サムネイル + 4
+	// ヘッダー
+	$stage.object[@ボタン_エクストラ_ヘッダー_ギャラリー].joypad_down  = @ボタン_エクストラ_ＣＧ_サムネイル + 0
+	$stage.object[@ボタン_エクストラ_ヘッダー_レコード].joypad_down  = @ボタン_エクストラ_ＣＧ_サムネイル + 0
+	$stage.object[@ボタン_エクストラ_ヘッダー_タイトル].joypad_down  = @ボタン_エクストラ_ＣＧ_サムネイル + 0
 	
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 4].joypad_up    = @ボタン_エクストラ_ＣＧ_サムネイル + 1
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 4].joypad_down  = @ボタン_エクストラ_ＣＧ_現在のページ
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 4].joypad_left  = @ボタン_エクストラ_ＣＧ_サムネイル + 3
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 4].joypad_right = @ボタン_エクストラ_ＣＧ_サムネイル + 5
+	// ＣＧサムネイル
+	for( $i = 0, $i < 4, $i += 1 )
+	{
+		if( $stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].disp ) {
+			$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + $i].joypad_up = @ボタン_エクストラ_ヘッダー_ギャラリー
+		}
+	}
 	
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 5].joypad_up    = @ボタン_エクストラ_ＣＧ_サムネイル + 2
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 5].joypad_down  = @ボタン_エクストラ_ＣＧ_現在のページ
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 5].joypad_left  = @ボタン_エクストラ_ＣＧ_サムネイル + 4
-	$stage.object[@ボタン_エクストラ_ＣＧ_サムネイル + 5].joypad_right = @ボタン_エクストラ_ＣＧ_サムネイル + 3
+	// サウンドプレイヤー
+	$len = $$get_extra_cg_page_thumb_max
 	
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 0].joypad_up    = @ボタン_エクストラ_ＣＧ_サムネイル + 3
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 0].joypad_down  = @ボタン_エクストラ_ＣＧ_サムネイル + 0
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 0].joypad_left  = @ボタン_エクストラ_ＣＧ_閉じる
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 0].joypad_right = @ボタン_エクストラ_ＣＧ_ページ + 1
+	$stage.object[@ボタン_エクストラ_サウンド_再生].joypad_up    = @ボタン_エクストラ_ＣＧ_サムネイル + $len - 1
+	$stage.object[@ボタン_エクストラ_サウンド_再生].joypad_down  = @ボタン_エクストラ_ヘッダー_ギャラリー
 	
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 1].joypad_up    = @ボタン_エクストラ_ＣＧ_サムネイル + 4
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 1].joypad_down  = @ボタン_エクストラ_ＣＧ_サムネイル + 1
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 1].joypad_left  = @ボタン_エクストラ_ＣＧ_ページ + 0
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 1].joypad_right = @ボタン_エクストラ_ＣＧ_ページ + 2
+	$stage.object[@ボタン_エクストラ_サウンド_停止].joypad_up    = @ボタン_エクストラ_ＣＧ_サムネイル + $len - 1
+	$stage.object[@ボタン_エクストラ_サウンド_停止].joypad_down  = @ボタン_エクストラ_ヘッダー_ギャラリー
 	
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 2].joypad_up    = @ボタン_エクストラ_ＣＧ_サムネイル + 4
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 2].joypad_down  = @ボタン_エクストラ_ＣＧ_サムネイル + 1
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 2].joypad_left  = @ボタン_エクストラ_ＣＧ_ページ + 1
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 2].joypad_right = @ボタン_エクストラ_ＣＧ_ページ + 3
+	$stage.object[@ボタン_エクストラ_サウンド_前へ].joypad_up    = @ボタン_エクストラ_ＣＧ_サムネイル + $len - 1
+	$stage.object[@ボタン_エクストラ_サウンド_前へ].joypad_down  = @ボタン_エクストラ_ヘッダー_ギャラリー
 	
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 3].joypad_up    = @ボタン_エクストラ_ＣＧ_サムネイル + 5
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 3].joypad_down  = @ボタン_エクストラ_ＣＧ_サムネイル + 2
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 3].joypad_left  = @ボタン_エクストラ_ＣＧ_ページ + 2
-	$stage.object[@ボタン_エクストラ_ＣＧ_ページ + 3].joypad_right = @ボタン_エクストラ_ＣＧ_閉じる
+	$stage.object[@ボタン_エクストラ_サウンド_次へ].joypad_up    = @ボタン_エクストラ_ＣＧ_サムネイル + $len - 1
+	$stage.object[@ボタン_エクストラ_サウンド_次へ].joypad_down  = @ボタン_エクストラ_ヘッダー_ギャラリー
 	
-	$stage.object[@ボタン_エクストラ_ＣＧ_閉じる].joypad_up    = @ボタン_エクストラ_ＣＧ_サムネイル + 5
-	$stage.object[@ボタン_エクストラ_ＣＧ_閉じる].joypad_down  = @ボタン_エクストラ_ＣＧ_サムネイル + 2
-	$stage.object[@ボタン_エクストラ_ＣＧ_閉じる].joypad_left  = @ボタン_エクストラ_ＣＧ_ページ + 3
-	$stage.object[@ボタン_エクストラ_ＣＧ_閉じる].joypad_right = @ボタン_エクストラ_ＣＧ_ページ + 0
+	$stage.object[@ボタン_エクストラ_サウンド_トラックリスト].joypad_up    = @ボタン_エクストラ_ＣＧ_サムネイル + $len - 1
+	$stage.object[@ボタン_エクストラ_サウンド_トラックリスト].joypad_down  = @ボタン_エクストラ_ヘッダー_ギャラリー
 }

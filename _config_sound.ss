@@ -94,6 +94,15 @@ command $$create_config_sound_scene_object(property $stage : stage)
 	$$create_ui_toggle_button($stage.object[@ボタン_コンフィグ_キャラクター１７_ミュート], _config_voice_chara_btn17, 1191, 709, @ボタン_コンフィグ_キャラクター１７_ミュート, <OBJBTN_GROUP_NO_EXCALL>, 1, syscom.get_charakoe_onoff($$get_config_charakoe(16)))
 	$$create_config_voice_character_slider($stage.object[@スライダー_コンフィグ_キャラクター１７_音量], _config_voice_slider, 1173, 830, @スライダー_コンフィグ_キャラクター１７_音量, <OBJBTN_GROUP_NO_EXCALL>, 1, 2, 4)
 	$$create_ui_button($stage.object[@ボタン_コンフィグ_キャラクター１７_ボイス再生], _config_voice_play_btn, 1304, 711, @ボタン_コンフィグ_キャラクター１７_ボイス再生, <OBJBTN_GROUP_NO_EXCALL>, -1)
+	$$create_ui_toggle_button($stage.object[@ボタン_コンフィグ_キャラクター１８_ミュート], _config_voice_chara_btn18, 1365, 709, @ボタン_コンフィグ_キャラクター１８_ミュート, <OBJBTN_GROUP_NO_EXCALL>, 1, syscom.get_charakoe_onoff($$get_config_charakoe(17)))
+	$$create_config_voice_character_slider($stage.object[@スライダー_コンフィグ_キャラクター１８_音量], _config_voice_slider, 1347, 830, @スライダー_コンフィグ_キャラクター１８_音量, <OBJBTN_GROUP_NO_EXCALL>, 1, 2, 4)
+	$$create_ui_button($stage.object[@ボタン_コンフィグ_キャラクター１８_ボイス再生], _config_voice_play_btn, 1478, 711, @ボタン_コンフィグ_キャラクター１８_ボイス再生, <OBJBTN_GROUP_NO_EXCALL>, -1)
+	$$create_ui_toggle_button($stage.object[@ボタン_コンフィグ_キャラクター１９_ミュート], _config_voice_chara_btn19, 1539, 709, @ボタン_コンフィグ_キャラクター１９_ミュート, <OBJBTN_GROUP_NO_EXCALL>, 1, syscom.get_charakoe_onoff($$get_config_charakoe(18)))
+	$$create_config_voice_character_slider($stage.object[@スライダー_コンフィグ_キャラクター１９_音量], _config_voice_slider, 1521, 830, @スライダー_コンフィグ_キャラクター１９_音量, <OBJBTN_GROUP_NO_EXCALL>, 1, 2, 4)
+	$$create_ui_button($stage.object[@ボタン_コンフィグ_キャラクター１９_ボイス再生], _config_voice_play_btn, 1652, 711, @ボタン_コンフィグ_キャラクター１９_ボイス再生, <OBJBTN_GROUP_NO_EXCALL>, -1)
+	$$create_ui_toggle_button($stage.object[@ボタン_コンフィグ_キャラクター２０_ミュート], _config_voice_chara_btn20, 1713, 709, @ボタン_コンフィグ_キャラクター２０_ミュート, <OBJBTN_GROUP_NO_EXCALL>, 1, syscom.get_charakoe_onoff($$get_config_charakoe(19)))
+	$$create_config_voice_character_slider($stage.object[@スライダー_コンフィグ_キャラクター２０_音量], _config_voice_slider, 1695, 830, @スライダー_コンフィグ_キャラクター２０_音量, <OBJBTN_GROUP_NO_EXCALL>, 1, 2, 4)
+	$$create_ui_button($stage.object[@ボタン_コンフィグ_キャラクター２０_ボイス再生], _config_voice_play_btn, 1826, 711, @ボタン_コンフィグ_キャラクター２０_ボイス再生, <OBJBTN_GROUP_NO_EXCALL>, -1)
 }
 
 //---------------------------------------------------------------------------
@@ -113,6 +122,7 @@ command $$show_config_sound_scene_object(property $stage : stage)
 	property $i
 	property $reverse
 	property $anim_check_obj_no
+	property $pos_list : intlist
 	
 	// ジョイパッドで最初に選択されているボタンを設定する
 	$$set_joypad_focus_button(@ボタン_コンフィグ_ヘッダー_サウンド)
@@ -126,6 +136,181 @@ command $$show_config_sound_scene_object(property $stage : stage)
 	
 	// アニメ―ション前に画面を更新する
 	disp
+	
+	// 穂乃夏の成長状態によってサンプルボイスを変更する
+	if( @システム_穂乃夏出現 == 1 ) {
+		$$overwrite_config_charakoe_sample_voice(017, 0, 603300312)		// KOE(603300312,015)【穂乃夏】「うーうー」R
+		$$overwrite_config_charakoe_sample_voice(017, 1, 603701883)		// KOE(603701883,015)【穂乃夏】「がおー」R
+		$$overwrite_config_charakoe_sample_voice(017, 2, 603300318)		// KOE(603300318,015)【穂乃夏】「ま、ま」R
+	} elseif( @システム_穂乃夏出現 == 2 ) {
+		$$overwrite_config_charakoe_sample_voice(017, 0, 603800451)		// KOE(603800451,015)【穂乃夏】「ほのかの『ほ』！」R
+		$$overwrite_config_charakoe_sample_voice(017, 1, 603800099)		// KOE(603800099,015)【穂乃夏】「ほのか、きづかいのおに！」R
+		$$overwrite_config_charakoe_sample_voice(017, 2, 603800469)		// KOE(603800469,015)【穂乃夏】「父、明日も虫とりする？」R
+	}
+	
+	// 各出現フラグを参照して表示／非表示にする
+	if( @システム_穂乃夏出現 == 1 ) {
+		$stage.object[@ボタン_コンフィグ_キャラクター１７_ミュート].change_file(_config_voice_chara_btn17b)
+	}
+	
+	// 各ボタン非表示の場合は座標を詰める
+	if( @システム_絵美出現 == 0 && @システム_穂乃夏出現 == 0 )
+	{
+		$pos_list.resize(6 * 3)
+		$pos_list.sets(0,
+				$stage.object[@ボタン_コンフィグ_キャラクター１６_ミュート].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１６_ミュート].y,
+				$stage.object[@スライダー_コンフィグ_キャラクター１６_音量].x,
+				$stage.object[@スライダー_コンフィグ_キャラクター１６_音量].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１６_ボイス再生].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１６_ボイス再生].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１７_ミュート].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１７_ミュート].y,
+				$stage.object[@スライダー_コンフィグ_キャラクター１７_音量].x,
+				$stage.object[@スライダー_コンフィグ_キャラクター１７_音量].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１７_ボイス再生].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１７_ボイス再生].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１８_ミュート].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１８_ミュート].y,
+				$stage.object[@スライダー_コンフィグ_キャラクター１８_音量].x,
+				$stage.object[@スライダー_コンフィグ_キャラクター１８_音量].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１８_ボイス再生].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１８_ボイス再生].y
+		)
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１８_ミュート].x = $pos_list[0]
+		$stage.object[@ボタン_コンフィグ_キャラクター１８_ミュート].y = $pos_list[1]
+		$stage.object[@スライダー_コンフィグ_キャラクター１８_音量].x = $pos_list[2]
+		$stage.object[@スライダー_コンフィグ_キャラクター１８_音量].y = $pos_list[3]
+		$stage.object[@ボタン_コンフィグ_キャラクター１８_ボイス再生].x = $pos_list[4]
+		$stage.object[@ボタン_コンフィグ_キャラクター１８_ボイス再生].y = $pos_list[5]
+		$stage.object[@ボタン_コンフィグ_キャラクター１９_ミュート].x = $pos_list[6]
+		$stage.object[@ボタン_コンフィグ_キャラクター１９_ミュート].y = $pos_list[7]
+		$stage.object[@スライダー_コンフィグ_キャラクター１９_音量].x = $pos_list[8]
+		$stage.object[@スライダー_コンフィグ_キャラクター１９_音量].y = $pos_list[9]
+		$stage.object[@ボタン_コンフィグ_キャラクター１９_ボイス再生].x = $pos_list[10]
+		$stage.object[@ボタン_コンフィグ_キャラクター１９_ボイス再生].y = $pos_list[11]
+		$stage.object[@ボタン_コンフィグ_キャラクター２０_ミュート].x = $pos_list[12]
+		$stage.object[@ボタン_コンフィグ_キャラクター２０_ミュート].y = $pos_list[13]
+		$stage.object[@スライダー_コンフィグ_キャラクター２０_音量].x = $pos_list[14]
+		$stage.object[@スライダー_コンフィグ_キャラクター２０_音量].y = $pos_list[15]
+		$stage.object[@ボタン_コンフィグ_キャラクター２０_ボイス再生].x = $pos_list[16]
+		$stage.object[@ボタン_コンフィグ_キャラクター２０_ボイス再生].y = $pos_list[17]
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１６_ミュート].disp = 0
+		$stage.object[@スライダー_コンフィグ_キャラクター１６_音量].disp = 0
+		$stage.object[@ボタン_コンフィグ_キャラクター１６_ボイス再生].disp = 0
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１７_ミュート].disp = 0
+		$stage.object[@スライダー_コンフィグ_キャラクター１７_音量].disp = 0
+		$stage.object[@ボタン_コンフィグ_キャラクター１７_ボイス再生].disp = 0
+	}
+	elseif( @システム_絵美出現 == 1 && @システム_穂乃夏出現 == 0 )
+	{
+		$pos_list.resize(6 * 3)
+		$pos_list.sets(0,
+				$stage.object[@ボタン_コンフィグ_キャラクター１７_ミュート].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１７_ミュート].y,
+				$stage.object[@スライダー_コンフィグ_キャラクター１７_音量].x,
+				$stage.object[@スライダー_コンフィグ_キャラクター１７_音量].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１７_ボイス再生].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１７_ボイス再生].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１８_ミュート].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１８_ミュート].y,
+				$stage.object[@スライダー_コンフィグ_キャラクター１８_音量].x,
+				$stage.object[@スライダー_コンフィグ_キャラクター１８_音量].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１８_ボイス再生].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１８_ボイス再生].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１９_ミュート].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１９_ミュート].y,
+				$stage.object[@スライダー_コンフィグ_キャラクター１９_音量].x,
+				$stage.object[@スライダー_コンフィグ_キャラクター１９_音量].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１９_ボイス再生].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１９_ボイス再生].y
+		)
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１８_ミュート].x = $pos_list[0]
+		$stage.object[@ボタン_コンフィグ_キャラクター１８_ミュート].y = $pos_list[1]
+		$stage.object[@スライダー_コンフィグ_キャラクター１８_音量].x = $pos_list[2]
+		$stage.object[@スライダー_コンフィグ_キャラクター１８_音量].y = $pos_list[3]
+		$stage.object[@ボタン_コンフィグ_キャラクター１８_ボイス再生].x = $pos_list[4]
+		$stage.object[@ボタン_コンフィグ_キャラクター１８_ボイス再生].y = $pos_list[5]
+		$stage.object[@ボタン_コンフィグ_キャラクター１９_ミュート].x = $pos_list[6]
+		$stage.object[@ボタン_コンフィグ_キャラクター１９_ミュート].y = $pos_list[7]
+		$stage.object[@スライダー_コンフィグ_キャラクター１９_音量].x = $pos_list[8]
+		$stage.object[@スライダー_コンフィグ_キャラクター１９_音量].y = $pos_list[9]
+		$stage.object[@ボタン_コンフィグ_キャラクター１９_ボイス再生].x = $pos_list[10]
+		$stage.object[@ボタン_コンフィグ_キャラクター１９_ボイス再生].y = $pos_list[11]
+		$stage.object[@ボタン_コンフィグ_キャラクター２０_ミュート].x = $pos_list[12]
+		$stage.object[@ボタン_コンフィグ_キャラクター２０_ミュート].y = $pos_list[13]
+		$stage.object[@スライダー_コンフィグ_キャラクター２０_音量].x = $pos_list[14]
+		$stage.object[@スライダー_コンフィグ_キャラクター２０_音量].y = $pos_list[15]
+		$stage.object[@ボタン_コンフィグ_キャラクター２０_ボイス再生].x = $pos_list[16]
+		$stage.object[@ボタン_コンフィグ_キャラクター２０_ボイス再生].y = $pos_list[17]
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１７_ミュート].disp = 0
+		$stage.object[@スライダー_コンフィグ_キャラクター１７_音量].disp = 0
+		$stage.object[@ボタン_コンフィグ_キャラクター１７_ボイス再生].disp = 0
+	}
+	elseif( @システム_絵美出現 == 0 && @システム_穂乃夏出現 >= 1 )
+	{
+		$pos_list.resize(6 * 4)
+		$pos_list.sets(0,
+				$stage.object[@ボタン_コンフィグ_キャラクター１６_ミュート].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１６_ミュート].y,
+				$stage.object[@スライダー_コンフィグ_キャラクター１６_音量].x,
+				$stage.object[@スライダー_コンフィグ_キャラクター１６_音量].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１６_ボイス再生].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１６_ボイス再生].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１７_ミュート].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１７_ミュート].y,
+				$stage.object[@スライダー_コンフィグ_キャラクター１７_音量].x,
+				$stage.object[@スライダー_コンフィグ_キャラクター１７_音量].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１７_ボイス再生].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１７_ボイス再生].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１８_ミュート].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１８_ミュート].y,
+				$stage.object[@スライダー_コンフィグ_キャラクター１８_音量].x,
+				$stage.object[@スライダー_コンフィグ_キャラクター１８_音量].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１８_ボイス再生].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１８_ボイス再生].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１９_ミュート].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１９_ミュート].y,
+				$stage.object[@スライダー_コンフィグ_キャラクター１９_音量].x,
+				$stage.object[@スライダー_コンフィグ_キャラクター１９_音量].y,
+				$stage.object[@ボタン_コンフィグ_キャラクター１９_ボイス再生].x,
+				$stage.object[@ボタン_コンフィグ_キャラクター１９_ボイス再生].y
+		)
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１７_ミュート].x = $pos_list[0]
+		$stage.object[@ボタン_コンフィグ_キャラクター１７_ミュート].y = $pos_list[1]
+		$stage.object[@スライダー_コンフィグ_キャラクター１７_音量].x = $pos_list[2]
+		$stage.object[@スライダー_コンフィグ_キャラクター１７_音量].y = $pos_list[3]
+		$stage.object[@ボタン_コンフィグ_キャラクター１７_ボイス再生].x = $pos_list[4]
+		$stage.object[@ボタン_コンフィグ_キャラクター１７_ボイス再生].y = $pos_list[5]
+		$stage.object[@ボタン_コンフィグ_キャラクター１８_ミュート].x = $pos_list[6]
+		$stage.object[@ボタン_コンフィグ_キャラクター１８_ミュート].y = $pos_list[7]
+		$stage.object[@スライダー_コンフィグ_キャラクター１８_音量].x = $pos_list[8]
+		$stage.object[@スライダー_コンフィグ_キャラクター１８_音量].y = $pos_list[9]
+		$stage.object[@ボタン_コンフィグ_キャラクター１８_ボイス再生].x = $pos_list[10]
+		$stage.object[@ボタン_コンフィグ_キャラクター１８_ボイス再生].y = $pos_list[11]
+		$stage.object[@ボタン_コンフィグ_キャラクター１９_ミュート].x = $pos_list[12]
+		$stage.object[@ボタン_コンフィグ_キャラクター１９_ミュート].y = $pos_list[13]
+		$stage.object[@スライダー_コンフィグ_キャラクター１９_音量].x = $pos_list[14]
+		$stage.object[@スライダー_コンフィグ_キャラクター１９_音量].y = $pos_list[15]
+		$stage.object[@ボタン_コンフィグ_キャラクター１９_ボイス再生].x = $pos_list[16]
+		$stage.object[@ボタン_コンフィグ_キャラクター１９_ボイス再生].y = $pos_list[17]
+		$stage.object[@ボタン_コンフィグ_キャラクター２０_ミュート].x = $pos_list[18]
+		$stage.object[@ボタン_コンフィグ_キャラクター２０_ミュート].y = $pos_list[19]
+		$stage.object[@スライダー_コンフィグ_キャラクター２０_音量].x = $pos_list[20]
+		$stage.object[@スライダー_コンフィグ_キャラクター２０_音量].y = $pos_list[21]
+		$stage.object[@ボタン_コンフィグ_キャラクター２０_ボイス再生].x = $pos_list[22]
+		$stage.object[@ボタン_コンフィグ_キャラクター２０_ボイス再生].y = $pos_list[23]
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１６_ミュート].disp = 0
+		$stage.object[@スライダー_コンフィグ_キャラクター１６_音量].disp = 0
+		$stage.object[@ボタン_コンフィグ_キャラクター１６_ボイス再生].disp = 0
+	}
 	
 	// ワイプ（表示速度によって変更）
 	if( <EFFECT_SPEED_SYS_MENU> )
@@ -374,6 +559,7 @@ command $$set_config_sound_joypad_navigation(property $stage : stage)
 		// 最下段
 		if( @コンフィグ_キャラクターボイス最大数 - 5 <= $i  )
 		{
+			$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + $i].joypad_down  = @ボタン_コンフィグ_キャラクター別音声_全てオン
 			$stage.object[@スライダー_コンフィグ_キャラクター１_音量 + $i * 2].joypad_down  = @ボタン_コンフィグ_キャラクター別音声_全てオン
 			
 			// 最左は最右へ
@@ -399,6 +585,83 @@ command $$set_config_sound_joypad_navigation(property $stage : stage)
 	$stage.object[@ボタン_コンフィグ_キャラクター別音声_全てオフ].joypad_down  = @ボタン_フッター_コンフィグ
 	$stage.object[@ボタン_コンフィグ_キャラクター別音声_全てオフ].joypad_left  = @ボタン_コンフィグ_キャラクター別音声_全てオン
 	$stage.object[@ボタン_コンフィグ_キャラクター別音声_全てオフ].joypad_right = @ボタン_コンフィグ_キャラクター別音声_全てオン
+	
+	// 各キャラクターの出現状態によってパッド遷移を調整する
+	if( @システム_絵美出現 == 0 && @システム_穂乃夏出現 == 0 )
+	{
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 10].joypad_down = @ボタン_コンフィグ_キャラクター１_ミュート + 17
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 11].joypad_down = @ボタン_コンフィグ_キャラクター１_ミュート + 18
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 12].joypad_down = @ボタン_コンフィグ_キャラクター１_ミュート + 19
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 13].joypad_down = @ボタン_コンフィグ_キャラクター１_ミュート + 19
+		
+		$stage.object[@スライダー_コンフィグ_キャラクター１_音量 + 10 * 2].joypad_down  = @ボタン_コンフィグ_キャラクター１_ミュート + 17
+		$stage.object[@スライダー_コンフィグ_キャラクター１_音量 + 11 * 2].joypad_down  = @ボタン_コンフィグ_キャラクター１_ミュート + 18
+		$stage.object[@スライダー_コンフィグ_キャラクター１_音量 + 12 * 2].joypad_down  = @ボタン_コンフィグ_キャラクター１_ミュート + 19
+		$stage.object[@スライダー_コンフィグ_キャラクター１_音量 + 13 * 2].joypad_down = @ボタン_コンフィグ_キャラクター１_ミュート + 19
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ミュート + 17].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 10 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ミュート + 18].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 11 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ミュート + 19].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 12 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 17].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 10 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 18].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 11 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 19].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 12 * 2
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ミュート + 17].joypad_left = @ボタン_コンフィグ_キャラクター１_ボイス再生 + 19
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 19].joypad_right = @ボタン_コンフィグ_キャラクター１_ミュート + 17
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター別音声_全てオン].joypad_up    = @スライダー_コンフィグ_キャラクター１８_音量
+		$stage.object[@ボタン_コンフィグ_キャラクター別音声_全てオフ].joypad_up    = @スライダー_コンフィグ_キャラクター１８_音量
+	}
+	elseif( @システム_絵美出現 == 1 && @システム_穂乃夏出現 == 0 )
+	{
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 11].joypad_down = @ボタン_コンフィグ_キャラクター１_ミュート + 17
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 12].joypad_down = @ボタン_コンフィグ_キャラクター１_ミュート + 18
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 13].joypad_down = @ボタン_コンフィグ_キャラクター１_ミュート + 19
+		
+		$stage.object[@スライダー_コンフィグ_キャラクター１_音量 + 11 * 2].joypad_down  = @ボタン_コンフィグ_キャラクター１_ミュート + 17
+		$stage.object[@スライダー_コンフィグ_キャラクター１_音量 + 12 * 2].joypad_down  = @ボタン_コンフィグ_キャラクター１_ミュート + 18
+		$stage.object[@スライダー_コンフィグ_キャラクター１_音量 + 13 * 2].joypad_down  = @ボタン_コンフィグ_キャラクター１_ミュート + 19
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ミュート + 17].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 11 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ミュート + 18].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 12 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ミュート + 19].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 13 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 17].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 11 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 18].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 12 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 19].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 13 * 2
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 15].joypad_right = @ボタン_コンフィグ_キャラクター１_ミュート + 17
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ミュート + 17].joypad_left = @ボタン_コンフィグ_キャラクター１_ボイス再生 + 15
+	}
+	elseif( @システム_絵美出現 == 0 && @システム_穂乃夏出現 >= 1 )
+	{
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 10].joypad_down = @ボタン_コンフィグ_キャラクター１_ミュート + 16
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 11].joypad_down = @ボタン_コンフィグ_キャラクター１_ミュート + 17
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 12].joypad_down = @ボタン_コンフィグ_キャラクター１_ミュート + 18
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 13].joypad_down = @ボタン_コンフィグ_キャラクター１_ミュート + 19
+		
+		$stage.object[@スライダー_コンフィグ_キャラクター１_音量 + 10 * 2].joypad_down  = @ボタン_コンフィグ_キャラクター１_ミュート + 16
+		$stage.object[@スライダー_コンフィグ_キャラクター１_音量 + 11 * 2].joypad_down  = @ボタン_コンフィグ_キャラクター１_ミュート + 17
+		$stage.object[@スライダー_コンフィグ_キャラクター１_音量 + 12 * 2].joypad_down  = @ボタン_コンフィグ_キャラクター１_ミュート + 18
+		$stage.object[@スライダー_コンフィグ_キャラクター１_音量 + 13 * 2].joypad_down  = @ボタン_コンフィグ_キャラクター１_ミュート + 19
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ミュート + 16].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 10 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ミュート + 17].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 11 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ミュート + 18].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 12 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ミュート + 19].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 13 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 16].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 10 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 17].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 11 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 18].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 12 * 2
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 19].joypad_up = @スライダー_コンフィグ_キャラクター１_音量 + 13 * 2
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ミュート + 16].joypad_left = @ボタン_コンフィグ_キャラクター１_ボイス再生 + 19
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター１_ボイス再生 + 19].joypad_right = @ボタン_コンフィグ_キャラクター１_ミュート + 16
+		
+		$stage.object[@ボタン_コンフィグ_キャラクター別音声_全てオン].joypad_up    = @スライダー_コンフィグ_キャラクター１７_音量
+		$stage.object[@ボタン_コンフィグ_キャラクター別音声_全てオフ].joypad_up    = @スライダー_コンフィグ_キャラクター１７_音量
+	}
 	
 	for( $i = @ボタン_フッター_セーブ, $i <= @ボタン_フッター_戻る, $i += 1 )
 	{

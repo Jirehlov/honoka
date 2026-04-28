@@ -26,7 +26,7 @@ command $$create_ui_scrollview(property $obj : object, property $filename : str,
 	// 背景を作成する
 	$obj.ui_scview_bg.create($filename + "_bg", 1)
 	$obj.ui_scview_bg.f.resize(<UI_F_FLAG_MAX>)
-	$$set_ui_scrollview_group($obj.ui_scview_bg, $group_no)
+	$$set_ui_scrollview_group($obj.ui_scview_bg, $obj, $group_no)
 	
 	// マスクを作成する
 	mask[$group_no].init
@@ -195,7 +195,7 @@ command $$set_ui_scrollview_margin(property $obj : object, property $margin)
 //---------------------------------------------------------------------------
 // 指定したオブジェクトをスクロールビューのグループとして設定する
 //---------------------------------------------------------------------------
-command $$set_ui_scrollview_group(property $obj : object, property $group_no)
+command $$set_ui_scrollview_group(property $obj : object, property $scroll_obj : object, property $group_no)
 {
 	$obj.group_no = $group_no
 	$obj.mask_no  = $group_no
@@ -208,7 +208,7 @@ command $$set_ui_scrollview_group(property $obj : object, property $group_no)
 	// スクロールビュー外のボタンは反応しないようにする
 	if( $obj.type == <UI_TYPE_BUTTON> || $obj.type == <UI_TYPE_TOGGLE_BUTTON> || $obj.type == <UI_TYPE_SELECTABLE_BUTTON> || $obj.type == <UI_TYPE_SLIDER> || $obj.type == <UI_TYPE_SELECTBOX> )
 	{
-		if( $obj.y + $obj.y_rep[0] + $$get_system_ui_get_size_y($obj) < excall[excall.is_excall].back.object[$group_no].f_scview_top_y || excall[excall.is_excall].back.object[$group_no].f_scview_top_y + excall[excall.is_excall].back.object[$group_no].f_scview_mask_size_y < $obj.y + $obj.y_rep[0] )
+		if( $obj.y + $obj.y_rep[0] + $$get_system_ui_get_size_y($obj) < $scroll_obj.f_scview_top_y || $scroll_obj.f_scview_top_y + $scroll_obj.f_scview_mask_size_y < $obj.y + $obj.y_rep[0] )
 		{
 			$obj.disp = 0
 		}
@@ -222,6 +222,11 @@ command $$fa_ui_scrollview_group(property $fa : frameaction, property $obj : obj
 {
 	// スクロールビューが表示されていないときは処理しない
 	if( excall[excall.is_excall].front.object[$group_no].disp == 0 ) {
+		return
+	}
+	
+	// ＵＩがスクロールビューでない場合は処理しない
+	if( excall[excall.is_excall].front.object[$group_no].type != <UI_TYPE_SCROLLVIEW> ) {
 		return
 	}
 	

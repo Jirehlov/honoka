@@ -96,7 +96,9 @@ command $$update_ui_slider(property $obj : object, property $value)
 	// 左から右(→)
 	case(<SLIDER_DIRECTION_LR>)
 		$obj.ui_slider_handle.x_rep[0] = math.linear($value, $obj.f_slider_value_min, $obj.f_slider_clip_min, $obj.f_slider_value_max, $obj.f_slider_clip_max)	// ハンドルの座標を設定する
-		$obj.ui_slider_overlay.src_clip_right = $obj.ui_slider_handle.x_rep[0] + $obj.ui_slider_handle.get_size_x / 2											// オーバーレイの表示矩形を設定する
+		// $obj.ui_slider_overlay.src_clip_right = $obj.ui_slider_handle.x_rep[0] + $obj.ui_slider_handle.get_size_x / 2											// オーバーレイの表示矩形を設定する
+		// todo 頭正常な状態で再確認する。オフセット座標ちょい怪しい。他に影響がありそう
+		$obj.ui_slider_overlay.src_clip_right = -$obj.ui_slider_overlay.x + $obj.ui_slider_handle.x_rep[0] + $obj.ui_slider_handle.get_size_x / 2											// オーバーレイの表示矩形を設定する
 		
 	// 右から左(←)
 	case(<SLIDER_DIRECTION_RL>)
