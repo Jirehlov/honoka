@@ -71,5 +71,4 @@ jobs:
             "${{ steps.package.outputs.zip_path }}" \
             --target "$GITHUB_SHA" \
             --title "Snapshot ${{ steps.package.outputs.timestamp }} (${{ steps.package.outputs.short_sha }})" \
-            --notes "Snapshot build from branch \`${{ github.ref_name }}\` at commit \`${GITHUB_SHA}\`." \
-            --prerelease
+            --notes "Snapshot build from branch \`${{ github.ref_name }}\` at commit \`${GITHUB_SHA}\`."
