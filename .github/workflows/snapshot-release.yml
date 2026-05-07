@@ -1,0 +1,74 @@
+name: Snapshot Release
+
+on:
+  push:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build and publish snapshot
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install siglus-ssu
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install siglus-ssu
+
+      - name: Build snapshot
+        run: |
+          set -euo pipefail
+
+          mkdir -p build/snapshot
+          siglus-ssu -c "$GITHUB_WORKSPACE" build/snapshot/
+
+          test -f build/snapshot/Gameexe.dat
+          test -f build/snapshot/Scene.pck
+
+      - name: Package snapshot
+        id: package
+        run: |
+          set -euo pipefail
+
+          timestamp="$(TZ=Asia/Tokyo date +'%Y%m%d-%H%M%S')"
+          short_sha="${GITHUB_SHA::7}"
+          zip_name="snapshot-${timestamp}-${short_sha}.zip"
+
+          (
+            cd build/snapshot
+            zip -9 "../${zip_name}" Gameexe.dat Scene.pck
+          )
+
+          {
+            echo "timestamp=${timestamp}"
+            echo "short_sha=${short_sha}"
+            echo "zip_name=${zip_name}"
+            echo "zip_path=build/${zip_name}"
+            echo "tag=snapshot-${timestamp}-${short_sha}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          gh release create "${{ steps.package.outputs.tag }}" \
+            "${{ steps.package.outputs.zip_path }}" \
+            --target "$GITHUB_SHA" \
+            --title "Snapshot ${{ steps.package.outputs.timestamp }} (${{ steps.package.outputs.short_sha }})" \
+            --notes "Snapshot build from branch \`${{ github.ref_name }}\` at commit \`${GITHUB_SHA}\`." \
+            --prerelease
