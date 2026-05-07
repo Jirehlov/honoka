@@ -23,10 +23,11 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install siglus-ssu
+      - name: Install and initialize siglus-ssu
         run: |
           python -m pip install --upgrade pip
           python -m pip install siglus-ssu
+          siglus-ssu init --force
 
       - name: Build snapshot
         run: |
