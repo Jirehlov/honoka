@@ -339,12 +339,12 @@ command $$get_extra_cg_static_diff_cnt(property $cg_index) : int
     case(196) return (8)
     case(197) return (2)
     case(198) return (4)
-    case(199) return (7)
+    case(199) return (6)
     case(200) return (3)
     case(201) return (2)
     case(202) return (1)
     case(203) return (7)
-    case(204) return (9)
+    case(204) return (4)
     case(205) return (2)
     case(206) return (2)
     }
@@ -1156,12 +1156,11 @@ command $$get_extra_cg_static_diff_filename(property $cg_index, property $diff_i
     case(199)
         switch( $diff_index ) {
         case(0) return (CG_GE08_0101)
-        case(1) return (CG_GE08_0102)
-        case(2) return (CG_GE08_0103)
-        case(3) return (CG_GE08_0105)
-        case(4) return (CG_GE08_0107)
-        case(5) return (CG_GE08_0208)
-        case(6) return (CG_GE08_0308)
+        case(1) return (CG_GE08_0103)
+        case(2) return (CG_GE08_0105)
+        case(3) return (CG_GE08_0107)
+        case(4) return (CG_GE08_0208)
+        case(5) return (CG_GE08_0308)
         }
     case(200)
         switch( $diff_index ) {
@@ -1194,11 +1193,6 @@ command $$get_extra_cg_static_diff_filename(property $cg_index, property $diff_i
         case(1) return (CG_GE13_0102)
         case(2) return (CG_GE13_0103)
         case(3) return (CG_GE13_0104)
-        case(4) return (CG_GE13_0201)
-        case(5) return (CG_GE13_0202)
-        case(6) return (CG_GE13_0203)
-        case(7) return (CG_GE13_0204)
-        case(8) return (CG_GE13_0302)
         }
     case(205)
         switch( $diff_index ) {
